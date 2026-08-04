@@ -14,6 +14,29 @@ export interface AdoptionApplicationData {
   colorPreference?: string[];
   notes?: string;
   submittedAt?: string;
+
+  // New secure fields
+  contactMethod?: string;
+  residentialAddress?: string;
+  housingType?: string;
+  ownOrRent?: string;
+  landlordInfo?: string;
+  fenceDetails?: string;
+  noYardPlan?: string;
+  householdMembers?: string;
+  hasAllergies?: boolean;
+  allAgree?: boolean;
+  preparedAdoptionFee?: boolean;
+  agreeReservationFee?: boolean;
+  preparedOngoingExpenses?: boolean;
+  priorBreeds?: string;
+  hoursAlone?: string;
+  dayLocation?: string;
+  nightLocation?: string;
+  trainingPlan?: string;
+  unableToKeepCircumstances?: string;
+  signature?: string;
+  signatureDate?: string;
 }
 
 /**
@@ -93,7 +116,7 @@ export function generateAdopterConfirmationHtml(appData: AdoptionApplicationData
                 <tr>
                   <td style="background-color: #fcfaf7; padding: 12px 16px; border-bottom: 1px solid #e2e8f0;">
                     <h3 style="margin: 0; font-size: 15px; font-weight: bold; color: #0d2244; text-transform: uppercase; letter-spacing: 0.5px;">
-                      👤 Applicant Profile
+                      👤 Applicant Profile & Contact
                     </h3>
                   </td>
                 </tr>
@@ -101,8 +124,8 @@ export function generateAdopterConfirmationHtml(appData: AdoptionApplicationData
                   <td style="padding: 16px; background-color: #ffffff;">
                     <table border="0" cellpadding="0" cellspacing="0" width="100%" style="font-size: 14px; line-height: 1.6;">
                       <tr>
-                        <td width="35%" style="color: #718096; font-weight: 600; padding-bottom: 8px;">Full Name:</td>
-                        <td width="65%" style="color: #0d2244; font-weight: bold; padding-bottom: 8px;">${appData.fullName}</td>
+                        <td width="40%" style="color: #718096; font-weight: 600; padding-bottom: 8px;">Full Name:</td>
+                        <td width="60%" style="color: #0d2244; font-weight: bold; padding-bottom: 8px;">${appData.fullName}</td>
                       </tr>
                       <tr>
                         <td style="color: #718096; font-weight: 600; padding-bottom: 8px;">Email Address:</td>
@@ -113,9 +136,19 @@ export function generateAdopterConfirmationHtml(appData: AdoptionApplicationData
                         <td style="color: #0d2244; padding-bottom: 8px;">${appData.phone}</td>
                       </tr>
                       <tr>
-                        <td style="color: #718096; font-weight: 600;">Location:</td>
-                        <td style="color: #0d2244;">${appData.location}</td>
+                        <td style="color: #718096; font-weight: 600; padding-bottom: 8px;">Preferred Contact:</td>
+                        <td style="color: #b45309; font-weight: bold; padding-bottom: 8px; text-transform: uppercase; font-size: 12px;">${appData.contactMethod || 'Email'}</td>
                       </tr>
+                      <tr>
+                        <td style="color: #718096; font-weight: 600; padding-bottom: 8px;">Client Location:</td>
+                        <td style="color: #0d2244; padding-bottom: 8px;">${appData.location}</td>
+                      </tr>
+                      ${appData.residentialAddress ? `
+                      <tr>
+                        <td style="color: #718096; font-weight: 600; vertical-align: top;">Residential Address:</td>
+                        <td style="color: #0d2244; font-family: Georgia, serif; font-style: italic; font-size: 13px;">${appData.residentialAddress}</td>
+                      </tr>
+                      ` : ''}
                     </table>
                   </td>
                 </tr>
@@ -124,7 +157,7 @@ export function generateAdopterConfirmationHtml(appData: AdoptionApplicationData
                 <tr>
                   <td style="background-color: #fcfaf7; padding: 12px 16px; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0;">
                     <h3 style="margin: 0; font-size: 15px; font-weight: bold; color: #0d2244; text-transform: uppercase; letter-spacing: 0.5px;">
-                      🏡 Home Setup & Experience
+                      🏡 Home & Household Setup
                     </h3>
                   </td>
                 </tr>
@@ -132,30 +165,64 @@ export function generateAdopterConfirmationHtml(appData: AdoptionApplicationData
                   <td style="padding: 16px; background-color: #ffffff;">
                     <table border="0" cellpadding="0" cellspacing="0" width="100%" style="font-size: 14px; line-height: 1.6;">
                       <tr>
-                        <td width="35%" style="color: #718096; font-weight: 600; padding-bottom: 8px;">Experience:</td>
-                        <td width="65%" style="color: #0d2244; padding-bottom: 8px;">${appData.experienceLevel}</td>
+                        <td width="40%" style="color: #718096; font-weight: 600; padding-bottom: 8px;">Housing Type:</td>
+                        <td width="60%" style="color: #0d2244; padding-bottom: 8px;">${appData.housingType || 'Single-Family Home'}</td>
                       </tr>
                       <tr>
-                        <td style="color: #718096; font-weight: 600; padding-bottom: 8px;">Other Pets:</td>
-                        <td style="color: #0d2244; padding-bottom: 8px;">${appData.hasOtherPets ? `Yes (${appData.petDetails || 'Details not specified'})` : 'No other pets'}</td>
+                        <td style="color: #718096; font-weight: 600; padding-bottom: 8px;">Ownership:</td>
+                        <td style="color: #0d2244; padding-bottom: 8px;">${appData.ownOrRent || 'Own'}</td>
+                      </tr>
+                      ${appData.ownOrRent === 'Rent' && appData.landlordInfo ? `
+                      <tr>
+                        <td style="color: #b45309; font-weight: 600; padding-bottom: 8px; vertical-align: top;">Landlord Confirmation:</td>
+                        <td style="color: #78350f; background-color: #fef3c7; padding: 6px; border-radius: 4px; font-size: 12px; font-family: monospace; padding-bottom: 8px;">${appData.landlordInfo}</td>
+                      </tr>
+                      ` : ''}
+                      <tr>
+                        <td style="color: #718096; font-weight: 600; padding-bottom: 8px;">Has Yard:</td>
+                        <td style="color: #0d2244; padding-bottom: 8px;">${appData.hasYard ? 'Yes' : 'No Yard'}</td>
                       </tr>
                       <tr>
-                        <td style="color: #718096; font-weight: 600; padding-bottom: 8px;">Fenced Yard:</td>
-                        <td style="color: #0d2244; padding-bottom: 8px;">${appData.hasYard ? (appData.yardFenced ? 'Yes, fully fenced' : 'Yes, but not fenced') : 'No yard'}</td>
+                        <td style="color: #718096; font-weight: 600; padding-bottom: 8px;">Yard Fenced:</td>
+                        <td style="color: #0d2244; padding-bottom: 8px;">${appData.yardFenced ? 'Yes, Fenced Safe' : 'Unfenced'}</td>
+                      </tr>
+                      ${appData.fenceDetails ? `
+                      <tr>
+                        <td style="color: #718096; font-weight: 600; padding-bottom: 8px; vertical-align: top;">Fence Details:</td>
+                        <td style="color: #0d2244; font-style: italic; padding-bottom: 8px; font-size: 13px;">${appData.fenceDetails}</td>
+                      </tr>
+                      ` : ''}
+                      ${!appData.hasYard && appData.noYardPlan ? `
+                      <tr>
+                        <td style="color: #2563eb; font-weight: 600; padding-bottom: 8px; vertical-align: top;">No Yard Plan:</td>
+                        <td style="color: #1e40af; background-color: #eff6ff; padding: 8px; border-radius: 4px; font-size: 12px; font-family: Georgia, serif; font-style: italic; padding-bottom: 8px;">${appData.noYardPlan}</td>
+                      </tr>
+                      ` : ''}
+                      <tr>
+                        <td style="color: #718096; font-weight: 600; padding-bottom: 8px; vertical-align: top;">Household Members:</td>
+                        <td style="color: #0d2244; padding-bottom: 8px; font-size: 13px;">${appData.householdMembers || 'Not specified'}</td>
                       </tr>
                       <tr>
-                        <td style="color: #718096; font-weight: 600;">Work Setup:</td>
+                        <td style="color: #718096; font-weight: 600; padding-bottom: 8px;">Dog Allergies?</td>
+                        <td style="color: #0d2244; padding-bottom: 8px;">${appData.hasAllergies ? 'Yes' : 'No'}</td>
+                      </tr>
+                      <tr>
+                        <td style="color: #718096; font-weight: 600; padding-bottom: 8px;">All Household Agrees:</td>
+                        <td style="color: #0d2244; padding-bottom: 8px; font-weight: bold;">${appData.allAgree !== false ? 'Yes ✓' : 'No'}</td>
+                      </tr>
+                      <tr>
+                        <td style="color: #718096; font-weight: 600;">Work Routine:</td>
                         <td style="color: #0d2244;">${appData.workSetup}</td>
                       </tr>
                     </table>
                   </td>
                 </tr>
 
-                <!-- Section 3 Header -->
+                <!-- Section 3 Header (Adopter Experience & Care Routine) -->
                 <tr>
                   <td style="background-color: #fcfaf7; padding: 12px 16px; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0;">
                     <h3 style="margin: 0; font-size: 15px; font-weight: bold; color: #0d2244; text-transform: uppercase; letter-spacing: 0.5px;">
-                      💖 Preferences & Notes
+                      🐕 Experience & Care Routine
                     </h3>
                   </td>
                 </tr>
@@ -163,20 +230,112 @@ export function generateAdopterConfirmationHtml(appData: AdoptionApplicationData
                   <td style="padding: 16px; background-color: #ffffff;">
                     <table border="0" cellpadding="0" cellspacing="0" width="100%" style="font-size: 14px; line-height: 1.6;">
                       <tr>
-                        <td width="35%" style="color: #718096; font-weight: 600; padding-bottom: 8px;">Gender:</td>
-                        <td width="65%" style="color: #0d2244; padding-bottom: 8px;">${appData.genderPreference}</td>
+                        <td width="40%" style="color: #718096; font-weight: 600; padding-bottom: 8px;">Dog Experience:</td>
+                        <td width="60%" style="color: #0d2244; padding-bottom: 8px;">${appData.experienceLevel}</td>
+                      </tr>
+                      ${appData.priorBreeds ? `
+                      <tr>
+                        <td style="color: #718096; font-weight: 600; padding-bottom: 8px; vertical-align: top;">Prior Breeds Owned:</td>
+                        <td style="color: #4a5568; font-style: italic; font-size: 13px; padding-bottom: 8px;">${appData.priorBreeds}</td>
+                      </tr>
+                      ` : ''}
+                      <tr>
+                        <td style="color: #718096; font-weight: 600; padding-bottom: 8px;">Other Pets:</td>
+                        <td style="color: #0d2244; padding-bottom: 8px;">${appData.hasOtherPets ? `Yes (${appData.petDetails || 'Details not specified'})` : 'None'}</td>
+                      </tr>
+                      <tr>
+                        <td style="color: #718096; font-weight: 600; padding-bottom: 8px;">Hours Left Alone:</td>
+                        <td style="color: #0d2244; padding-bottom: 8px;">${appData.hoursAlone || '1-2 hours'}</td>
+                      </tr>
+                      <tr>
+                        <td style="color: #718096; font-weight: 600; padding-bottom: 8px;">Day Location:</td>
+                        <td style="color: #0d2244; padding-bottom: 8px;">${appData.dayLocation || 'Inside Free'}</td>
+                      </tr>
+                      <tr>
+                        <td style="color: #718096; font-weight: 600; padding-bottom: 8px;">Night Sleeping Location:</td>
+                        <td style="color: #0d2244; padding-bottom: 8px;">${appData.nightLocation || 'In a crate'}</td>
+                      </tr>
+                      ${appData.trainingPlan ? `
+                      <tr>
+                        <td style="color: #718096; font-weight: 600; padding-bottom: 8px; vertical-align: top;">Socialization Blueprint:</td>
+                        <td style="color: #4a5568; font-style: italic; font-size: 13px; padding-bottom: 8px;">${appData.trainingPlan}</td>
+                      </tr>
+                      ` : ''}
+                      ${appData.unableToKeepCircumstances ? `
+                      <tr>
+                        <td style="color: #718096; font-weight: 600; vertical-align: top;">Unforeseen Life Contingency:</td>
+                        <td style="color: #4a5568; font-style: italic; font-size: 13px;">${appData.unableToKeepCircumstances}</td>
+                      </tr>
+                      ` : ''}
+                    </table>
+                  </td>
+                </tr>
+
+                <!-- Section 4 Header (Preferences & Financial Policies) -->
+                <tr>
+                  <td style="background-color: #fcfaf7; padding: 12px 16px; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0;">
+                    <h3 style="margin: 0; font-size: 15px; font-weight: bold; color: #0d2244; text-transform: uppercase; letter-spacing: 0.5px;">
+                      💼 Preferences & Policies
+                    </h3>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 16px; background-color: #ffffff;">
+                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="font-size: 14px; line-height: 1.6;">
+                      <tr>
+                        <td width="40%" style="color: #718096; font-weight: 600; padding-bottom: 8px;">Gender Preference:</td>
+                        <td width="60%" style="color: #0d2244; font-weight: bold; padding-bottom: 8px;">${appData.genderPreference}</td>
                       </tr>
                       <tr>
                         <td style="color: #718096; font-weight: 600; padding-bottom: 12px;">Coat Colors:</td>
                         <td style="color: #0d2244; padding-bottom: 12px;">${coatColors}</td>
                       </tr>
                       <tr>
-                        <td colspan="2" style="color: #718096; font-weight: 600; padding-bottom: 6px;">Additional Notes:</td>
+                        <td style="color: #718096; font-weight: 600; padding-bottom: 8px;">Adoption Fee ($850) OK?</td>
+                        <td style="color: #10b981; font-weight: bold; padding-bottom: 8px;">${appData.preparedAdoptionFee !== false ? 'Confirmed Yes ✓' : 'No'}</td>
+                      </tr>
+                      <tr>
+                        <td style="color: #718096; font-weight: 600; padding-bottom: 8px;">Holding Fee ($350) OK?</td>
+                        <td style="color: #10b981; font-weight: bold; padding-bottom: 8px;">${appData.agreeReservationFee !== false ? 'Agreed Yes ✓' : 'No'}</td>
+                      </tr>
+                      <tr>
+                        <td style="color: #718096; font-weight: 600; padding-bottom: 12px;">Ongoing Medical Budget?</td>
+                        <td style="color: #10b981; font-weight: bold; padding-bottom: 12px;">${appData.preparedOngoingExpenses !== false ? 'Confirmed Yes ✓' : 'No'}</td>
+                      </tr>
+                      <tr>
+                        <td colspan="2" style="color: #718096; font-weight: 600; padding-bottom: 6px;">Additional Comments:</td>
                       </tr>
                       <tr>
                         <td colspan="2" style="background-color: #f8fafc; padding: 12px; border: 1px solid #e2e8f0; border-radius: 6px; font-style: italic; color: #4a5568; font-size: 13px;">
-                          ${appData.notes || 'No additional notes provided.'}
+                          ${appData.notes || 'None'}
                         </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+                <!-- Section 5 Header (Execution Signature Block) -->
+                <tr>
+                  <td style="background-color: #0d2244; padding: 12px 16px; border-top: 1px solid #e2e8f0;">
+                    <h3 style="margin: 0; font-size: 13px; font-weight: bold; color: #d4af37; text-transform: uppercase; letter-spacing: 1px;">
+                      🖋️ Sealed Legal Executions
+                    </h3>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 16px; background-color: #0a1931;">
+                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="font-size: 12px; line-height: 1.6; color: #cbd5e1; font-family: monospace;">
+                      <tr>
+                        <td width="40%" style="padding-bottom: 4px;">Lifetime Welfare Return Pact:</td>
+                        <td width="60%" style="color: #34d399; font-weight: bold; padding-bottom: 4px;">ACCEPTED & COMMITTED ✓</td>
+                      </tr>
+                      <tr>
+                        <td style="padding-bottom: 4px;">Signed Digital Seal Name:</td>
+                        <td style="color: #fbbf24; font-weight: bold; font-family: Georgia, serif; font-size: 14px; text-transform: capitalize; padding-bottom: 4px;">${appData.signature || appData.fullName}</td>
+                      </tr>
+                      <tr>
+                        <td>Execution Timestamp:</td>
+                        <td style="color: #fbbf24; font-weight: bold;">${appData.signatureDate || appData.submittedAt || new Date().toISOString().split('T')[0]}</td>
                       </tr>
                     </table>
                   </td>

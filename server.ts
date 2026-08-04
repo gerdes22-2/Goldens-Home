@@ -3,6 +3,7 @@ import path from "path";
 import { createServer as createViteServer } from "vite";
 import fs from "fs";
 import nodemailer from "nodemailer";
+import crypto from "crypto";
 import { GoogleGenAI } from "@google/genai";
 import { generateAdopterConfirmationHtml, generateWaitlistNotificationHtml } from "./src/utils/emailTemplates";
 
@@ -124,6 +125,83 @@ async function startServer() {
     } catch (error) {
       console.error("Failed to save custom images:", error);
       return res.status(500).json({ error: "Failed to save custom images" });
+    }
+  });
+
+  // API: Cloudinary Secure Permanent Image Upload
+  app.post("/api/upload-image", async (req, res) => {
+    try {
+      const { image } = req.body;
+      if (!image) {
+        return res.status(400).json({ error: "No image data provided" });
+      }
+
+      let cloudName = process.env.CLOUDINARY_CLOUD_NAME;
+      let apiKey = process.env.CLOUDINARY_API_KEY;
+      let apiSecret = process.env.CLOUDINARY_API_SECRET;
+
+      // Extract credentials from CLOUDINARY_URL if provided
+      const cloudinaryUrl = process.env.CLOUDINARY_URL;
+      if (cloudinaryUrl && cloudinaryUrl.startsWith("cloudinary://")) {
+        try {
+          // Format: cloudinary://api_key:api_secret@cloud_name
+          const match = cloudinaryUrl.match(/cloudinary:\/\/([^:]+):([^@]+)@(.+)/);
+          if (match) {
+            apiKey = apiKey || match[1];
+            apiSecret = apiSecret || match[2];
+            cloudName = cloudName || match[3];
+            console.log("Successfully extracted Cloudinary config from CLOUDINARY_URL. Cloud Name:", cloudName);
+          }
+        } catch (e) {
+          console.error("Failed to parse CLOUDINARY_URL connection string:", e);
+        }
+      }
+
+      if (!cloudName || !apiKey || !apiSecret) {
+        console.warn("Cloudinary configuration missing. Storing locally as fallback.");
+        return res.json({ 
+          success: true, 
+          url: image, 
+          message: "Saved locally. Configure Cloudinary credentials in Settings to store online permanently!" 
+        });
+      }
+
+      // Generate a signed upload payload to Cloudinary
+      const timestamp = Math.round(new Date().getTime() / 1000);
+      const paramsToSign = `timestamp=${timestamp}${apiSecret}`;
+      const signature = crypto.createHash("sha1").update(paramsToSign).digest("hex");
+
+      const formData = new URLSearchParams();
+      formData.append("file", image);
+      formData.append("timestamp", timestamp.toString());
+      formData.append("api_key", apiKey);
+      formData.append("signature", signature);
+
+      const cloudinaryResponse = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+        method: "POST",
+        body: formData,
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        }
+      });
+
+      if (!cloudinaryResponse.ok) {
+        const errorText = await cloudinaryResponse.text();
+        console.error("Cloudinary upload failed:", errorText);
+        throw new Error(`Cloudinary error ${cloudinaryResponse.status}: ${errorText}`);
+      }
+
+      const uploadResult = await cloudinaryResponse.json();
+      console.log("Successfully uploaded image to Cloudinary! URL:", uploadResult.secure_url);
+      
+      return res.json({ 
+        success: true, 
+        url: uploadResult.secure_url 
+      });
+
+    } catch (error: any) {
+      console.error("Failed to upload image:", error);
+      return res.status(500).json({ error: "Failed to upload image to permanent cloud storage", details: error.message });
     }
   });
 

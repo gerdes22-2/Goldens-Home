@@ -94,7 +94,32 @@ export function ImageEditProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const saveCustomImage = async (idOrSrc: string, newSrc: string) => {
-    const updated = { ...customImages, [idOrSrc]: newSrc };
+    let finalSrc = newSrc;
+    
+    // If it's a base64 image, attempt to upload to Cloudinary via server-side secure proxy
+    if (newSrc.startsWith('data:')) {
+      try {
+        const uploadRes = await fetch('/api/upload-image', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ image: newSrc })
+        });
+        
+        if (uploadRes.ok) {
+          const data = await uploadRes.json();
+          if (data.success && data.url && !data.url.startsWith('data:')) {
+            finalSrc = data.url;
+            console.log('Successfully uploaded image to Cloudinary and replaced with URL:', finalSrc);
+          }
+        }
+      } catch (uploadErr) {
+        console.warn('Failed to upload image to Cloudinary, falling back to local base64 storage:', uploadErr);
+      }
+    }
+
+    const updated = { ...customImages, [idOrSrc]: finalSrc };
     setCustomImages(updated);
     try {
       localStorage.setItem('golden_paws_custom_images', JSON.stringify(updated));
@@ -148,16 +173,28 @@ export function ImageEditProvider({ children }: { children: React.ReactNode }) {
   return (
     <ImageEditContext.Provider
       value={{
-        isEditMode: false,
-        setEditMode: () => {},
+        isEditMode,
+        setEditMode,
         customImages,
         saveCustomImage,
         resetCustomImages,
-        openEditor: () => {},
+        openEditor,
         resolveImage
       }}
     >
       {children}
+      <GlobalEditModeToggler />
+      <ImageEditorModal
+        isOpen={editingImage !== null}
+        onClose={() => setEditingImage(null)}
+        editingImage={editingImage}
+        onSave={async (newSrc) => {
+          if (editingImage) {
+            await saveCustomImage(editingImage.idOrSrc, newSrc);
+            setEditingImage(null);
+          }
+        }}
+      />
     </ImageEditContext.Provider>
   );
 }
@@ -242,13 +279,14 @@ function ImageEditorModal({
   isOpen: boolean; 
   onClose: () => void; 
   editingImage: { idOrSrc: string; currentSrc: string } | null;
-  onSave: (newSrc: string) => void;
+  onSave: (newSrc: string) => Promise<void>;
 }) {
   const { resolveImage } = useImageEdit();
   const [activeTab, setActiveTab] = useState<'upload' | 'url' | 'library'>('upload');
   const [urlInput, setUrlInput] = useState('');
   const [previewSrc, setPreviewSrc] = useState('');
   const [dragging, setDragging] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -537,21 +575,38 @@ function ImageEditorModal({
                 <div className="pt-6 border-t border-stone-100 flex items-center justify-end gap-3 mt-6">
                   <button
                     onClick={onClose}
-                    className="px-5 py-3 rounded-xl border border-stone-200 text-stone-600 font-bold hover:bg-stone-50 transition-colors text-xs"
+                    disabled={isSaving}
+                    className="px-5 py-3 rounded-xl border border-stone-200 text-stone-600 font-bold hover:bg-stone-50 transition-colors text-xs disabled:opacity-55"
                   >
                     Cancel
                   </button>
                   <button
-                    onClick={() => {
+                    onClick={async () => {
                       if (previewSrc) {
-                        onSave(previewSrc);
+                        setIsSaving(true);
+                        try {
+                          await onSave(previewSrc);
+                        } catch (err) {
+                          console.error(err);
+                        } finally {
+                          setIsSaving(false);
+                        }
                       }
                     }}
-                    disabled={!previewSrc}
+                    disabled={!previewSrc || isSaving}
                     className="flex items-center gap-2 px-6 py-3 bg-gold-500 hover:bg-gold-400 text-navy-950 font-black text-xs uppercase tracking-widest rounded-xl shadow-lg transition-all active:scale-95 disabled:opacity-50"
                   >
-                    <Check className="w-4 h-4" />
-                    Save & Apply
+                    {isSaving ? (
+                      <>
+                        <RefreshCw className="w-4 h-4 animate-spin" />
+                        Uploading to Cloud...
+                      </>
+                    ) : (
+                      <>
+                        <Check className="w-4 h-4" />
+                        Save & Apply
+                      </>
+                    )}
                   </button>
                 </div>
               </div>
