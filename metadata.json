@@ -1,0 +1,6 @@
+{
+  "name": "Golden Paws Home",
+  "description": "A premium, professional website for Golden Paws Home - reputable breeder of healthy, registered Golden Retriever puppies. Features available puppies, an interactive adoption application, a real-time master waitlist, and breeder documents.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
