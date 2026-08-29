@@ -7,7 +7,11 @@ import {
 import { CARE_RESOURCES } from '../data';
 import { EditableImage } from './ImageEditContext';
 
-export default function ResourcesView() {
+interface ResourcesViewProps {
+  setTab?: (tab: string) => void;
+}
+
+export default function ResourcesView({ setTab }: ResourcesViewProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [readingDossier, setReadingDossier] = useState<any | null>(null);
@@ -492,6 +496,41 @@ export default function ResourcesView() {
           />
         </motion.div>
       </section>
+
+      {/* QUICK CROSS NAVIGATION */}
+      {setTab && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="bg-navy-950 text-white rounded-3xl p-8 border border-gold-500/30 shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
+            <div>
+              <span className="text-[10px] font-mono font-black text-gold-400 uppercase tracking-widest bg-gold-500/10 px-3 py-1 rounded-full border border-gold-500/20">
+                Explore More
+              </span>
+              <h3 className="text-xl font-black mt-2">Explore Medical Clearances & Ranch Life</h3>
+              <p className="text-stone-300 text-xs mt-1">Navigate to our verified health audit or read weekly updates in our journal.</p>
+            </div>
+            <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+              <button
+                onClick={() => { setTab('health'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                className="px-5 py-3 rounded-2xl bg-white/10 hover:bg-gold-500 hover:text-navy-950 text-white font-bold text-xs transition-all active:scale-95 flex items-center gap-2"
+              >
+                <span>Health Audit →</span>
+              </button>
+              <button
+                onClick={() => { setTab('journal'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                className="px-5 py-3 rounded-2xl bg-white/10 hover:bg-gold-500 hover:text-navy-950 text-white font-bold text-xs transition-all active:scale-95 flex items-center gap-2"
+              >
+                <span>Ranch Journal →</span>
+              </button>
+              <button
+                onClick={() => { setTab('puppies'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                className="px-6 py-3 rounded-2xl bg-gold-500 hover:bg-gold-400 text-navy-950 font-black text-xs uppercase tracking-wider shadow-lg transition-all active:scale-95 flex items-center gap-2"
+              >
+                <span>Available Puppies →</span>
+              </button>
+            </div>
+          </div>
+        </section>
+      )}
 
     </div>
   );

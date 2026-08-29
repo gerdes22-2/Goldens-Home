@@ -10,9 +10,10 @@ import { Review } from '../types';
 interface ReviewsViewProps {
   reviews: Review[];
   onAddReview: (review: Review) => void;
+  setTab?: (tab: string) => void;
 }
 
-export default function ReviewsView({ reviews, onAddReview }: ReviewsViewProps) {
+export default function ReviewsView({ reviews, onAddReview, setTab }: ReviewsViewProps) {
   const [tagFilter, setTagFilter] = useState<string>('all');
   const [ratingFilter, setRatingFilter] = useState<number | null>(null);
   const [formOpen, setFormOpen] = useState(false);
@@ -747,6 +748,41 @@ export default function ReviewsView({ reviews, onAddReview }: ReviewsViewProps) 
             )}
           </div>
         </section>
+
+        {/* QUICK CROSS NAVIGATION */}
+        {setTab && (
+          <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div className="bg-navy-950 text-white rounded-3xl p-8 border border-gold-500/30 shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
+              <div>
+                <span className="text-[10px] font-mono font-black text-gold-400 uppercase tracking-widest bg-gold-500/10 px-3 py-1 rounded-full border border-gold-500/20">
+                  Ready to Adopt?
+                </span>
+                <h3 className="text-xl font-black mt-2">Become Our Next Happy Golden Family</h3>
+                <p className="text-stone-300 text-xs mt-1">Browse our active available puppies or join our master waitlist.</p>
+              </div>
+              <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                <button
+                  onClick={() => { setTab('puppies'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                  className="px-6 py-3 rounded-2xl bg-gold-500 hover:bg-gold-400 text-navy-950 font-black text-xs uppercase tracking-wider shadow-lg transition-all active:scale-95 flex items-center gap-2"
+                >
+                  <span>Available Puppies →</span>
+                </button>
+                <button
+                  onClick={() => { setTab('apply'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                  className="px-5 py-3 rounded-2xl bg-white text-navy-950 hover:bg-gold-500 font-black text-xs uppercase tracking-wider transition-all active:scale-95"
+                >
+                  <span>Apply Now →</span>
+                </button>
+                <button
+                  onClick={() => { setTab('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                  className="px-5 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs transition-all active:scale-95 flex items-center gap-2"
+                >
+                  <span>🏠 Home</span>
+                </button>
+              </div>
+            </div>
+          </section>
+        )}
 
       </div>
 

@@ -6,7 +6,11 @@ import {
 } from 'lucide-react';
 import { BREEDER_JOURNAL } from '../data';
 
-export default function JournalView() {
+interface JournalViewProps {
+  setTab?: (tab: string) => void;
+}
+
+export default function JournalView({ setTab }: JournalViewProps) {
   const [selectedType, setSelectedType] = useState<string>('all');
   const [expandedJournalId, setExpandedJournalId] = useState<string | null>(null);
   
@@ -361,6 +365,29 @@ export default function JournalView() {
                     </motion.div>
                   )}
                 </AnimatePresence>
+
+                {setTab && (
+                  <div className="pt-8 border-t border-white/10 flex flex-wrap items-center justify-center gap-3">
+                    <button
+                      onClick={() => { setTab('puppies'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                      className="px-6 py-3 bg-gold-500 hover:bg-gold-400 text-navy-950 rounded-xl font-black text-xs uppercase tracking-wider transition-all shadow-lg active:scale-95"
+                    >
+                      Available Puppies →
+                    </button>
+                    <button
+                      onClick={() => { setTab('resources'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                      className="px-5 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl font-bold text-xs transition-all active:scale-95"
+                    >
+                      Care Resources →
+                    </button>
+                    <button
+                      onClick={() => { setTab('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                      className="px-5 py-3 bg-white/5 hover:bg-white/15 text-stone-300 hover:text-white rounded-xl font-bold text-xs transition-all active:scale-95"
+                    >
+                      🏠 Home
+                    </button>
+                  </div>
+                )}
             </div>
         </div>
       </section>

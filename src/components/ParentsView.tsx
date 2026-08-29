@@ -31,7 +31,11 @@ interface FamilyTree {
   };
 }
 
-export default function ParentsView() {
+interface ParentsViewProps {
+  setTab?: (tab: string) => void;
+}
+
+export default function ParentsView({ setTab }: ParentsViewProps) {
   const [selectedParentId, setSelectedParentId] = useState<string>('s1');
   const [activeGenderFilter, setActiveGenderFilter] = useState<'all' | 'Sire' | 'Dam'>('all');
   const [inspectedClearance, setInspectedClearance] = useState<{ parentId: string; key: string; value: string } | null>(null);
@@ -468,13 +472,29 @@ export default function ParentsView() {
             <p className="text-gray-400 text-xs sm:text-base max-w-xl mx-auto leading-relaxed font-medium">
               Join our exclusive waitlist for upcoming 2026 litters. We prioritize families committed to life-long development and responsible ownership.
             </p>
-            <div className="pt-4">
-              <button 
-                onClick={() => alert("Please register via our 'Adoption Application' dashboard tab to apply for the master waitlist.")}
-                className="px-8 py-4 bg-gold-500 text-navy-950 font-black text-[10px] uppercase tracking-[0.2em] rounded-xl hover:bg-white transition-all cursor-pointer"
-              >
-                Apply for Master Waitlist
-              </button>
+            <div className="pt-4 flex flex-wrap items-center justify-center gap-3">
+              {setTab ? (
+                <>
+                  <button 
+                    onClick={() => { setTab('apply'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                    className="px-8 py-4 bg-gold-500 text-navy-950 font-black text-xs uppercase tracking-[0.2em] rounded-xl hover:bg-white transition-all shadow-lg active:scale-95"
+                  >
+                    Apply for Master Waitlist →
+                  </button>
+                  <button 
+                    onClick={() => { setTab('puppies'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                    className="px-6 py-4 bg-white/10 hover:bg-white/20 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all active:scale-95"
+                  >
+                    See Available Puppies →
+                  </button>
+                  <button 
+                    onClick={() => { setTab('about'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                    className="px-6 py-4 bg-white/5 hover:bg-white/15 text-stone-300 hover:text-white font-bold text-xs rounded-xl transition-all active:scale-95"
+                  >
+                    ← Our Philosophy
+                  </button>
+                </>
+              ) : null}
             </div>
           </div>
         </motion.div>

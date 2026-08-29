@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Mail, Sparkles, X as LucideX, ShieldCheck } from 'lucide-react';
 import Header from './components/Header';
@@ -20,17 +20,52 @@ import PuppyMatcherQuiz from './components/PuppyMatcherQuiz';
 import HealthAuditView from './components/HealthAuditView';
 import JournalView from './components/JournalView';
 import BreederDashboardView from './components/BreederDashboardView';
+import FloatingQuickNav from './components/FloatingQuickNav';
 
 import { DEFAULT_PUPPIES, DEFAULT_REVIEWS, DEFAULT_WAITLIST } from './data';
 import { Puppy, Review, WaitlistEntry, AdoptionApplication } from './types';
 
 export default function App() {
-  const [currentTab, setTab] = useState<string>('home');
+  const [currentTab, setTabState] = useState<string>('home');
+  const [history, setHistory] = useState<string[]>(['home']);
+  const [historyIndex, setHistoryIndex] = useState<number>(0);
+
   const [puppies, setPuppies] = useState<Puppy[]>(DEFAULT_PUPPIES);
   const [reviews, setReviews] = useState<Review[]>(DEFAULT_REVIEWS);
   const [waitlist, setWaitlist] = useState<WaitlistEntry[]>(DEFAULT_WAITLIST);
   const [selectedPuppy, setSelectedPuppy] = useState<Puppy | null>(null);
   
+  // Navigation Handler with history recording
+  const setTab = useCallback((newTab: string) => {
+    setTabState(newTab);
+    setHistory((prev) => {
+      const trimmed = prev.slice(0, historyIndex + 1);
+      return [...trimmed, newTab];
+    });
+    setHistoryIndex((prev) => prev + 1);
+  }, [historyIndex]);
+
+  const canGoBack = historyIndex > 0;
+  const canGoForward = historyIndex < history.length - 1;
+
+  const handleGoBack = useCallback(() => {
+    if (canGoBack) {
+      const prevIdx = historyIndex - 1;
+      setHistoryIndex(prevIdx);
+      setTabState(history[prevIdx]);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [canGoBack, historyIndex, history]);
+
+  const handleGoForward = useCallback(() => {
+    if (canGoForward) {
+      const nextIdx = historyIndex + 1;
+      setHistoryIndex(nextIdx);
+      setTabState(history[nextIdx]);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [canGoForward, historyIndex, history]);
+
   // Shared state connecting Available Pups to Adoption Application Wizard matching
   const [matchedPuppyName, setMatchedPuppyName] = useState<string>('');
 
@@ -87,7 +122,7 @@ export default function App() {
   };
 
   return (
-    <div id="app-root-container" className="min-h-screen flex flex-col justify-between bg-[#fcfaf7] font-sans">
+    <div id="app-root-container" className="min-h-screen flex flex-col justify-between bg-[#fcfaf7] font-sans relative">
       
       {/* HEADER NAVIGATION BAR */}
       <Header currentTab={currentTab} setTab={setTab} />
@@ -112,24 +147,24 @@ export default function App() {
           )}
 
           {currentTab === 'about' && (
-            <AboutView />
+            <AboutView setTab={setTab} />
           )}
 
           {currentTab === 'parents' && (
-            <ParentsView />
+            <ParentsView setTab={setTab} />
           )}
 
           {currentTab === 'process' && (
-            <ProcessView />
+            <ProcessView setTab={setTab} />
           )}
 
           {currentTab === 'resources' && (
-            <ResourcesView />
+            <ResourcesView setTab={setTab} />
           )}
 
           {currentTab === 'puppies' && (
             <PuppiesView 
-              puppies={puppies}
+              puppies={puppies} 
               selectedPuppy={selectedPuppy}
               setSelectedPuppy={setSelectedPuppy}
               setTab={setTab}
@@ -138,11 +173,11 @@ export default function App() {
           )}
 
           {currentTab === 'gallery' && (
-            <GalleryView />
+            <GalleryView setTab={setTab} />
           )}
 
           {currentTab === 'faqs' && (
-            <FAQsView />
+            <FAQsView setTab={setTab} />
           )}
 
           {currentTab === 'apply' && (
@@ -165,13 +200,14 @@ export default function App() {
           )}
 
           {currentTab === 'contact' && (
-            <ContactView />
+            <ContactView setTab={setTab} />
           )}
 
           {currentTab === 'reviews' && (
             <ReviewsView 
               reviews={reviews}
               onAddReview={handleAddReview}
+              setTab={setTab}
             />
           )}
           
@@ -187,12 +223,12 @@ export default function App() {
 
           {currentTab === 'health' && (
             <div className="pt-32 pb-32 max-w-5xl mx-auto px-4">
-              <HealthAuditView />
+              <HealthAuditView setTab={setTab} />
             </div>
           )}
 
           {currentTab === 'journal' && (
-            <JournalView />
+            <JournalView setTab={setTab} />
           )}
 
           {currentTab === 'breeder-portal' && (
@@ -200,6 +236,16 @@ export default function App() {
           )}
         </motion.div>
       </main>
+
+      {/* FLOATING QUICK NAVIGATION CONTROLS (BACK / FRONT / HOME / JUMP TO ANY PAGE) */}
+      <FloatingQuickNav
+        currentTab={currentTab}
+        setTab={setTab}
+        canGoBack={canGoBack}
+        canGoForward={canGoForward}
+        onGoBack={handleGoBack}
+        onGoForward={handleGoForward}
+      />
 
       {/* CUSTOM FOOTER INFO */}
       <Footer setTab={setTab} />

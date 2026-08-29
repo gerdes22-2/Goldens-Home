@@ -7,7 +7,11 @@ import {
 } from 'lucide-react';
 import { FAQS } from '../data';
 
-export default function FAQsView() {
+interface FAQsViewProps {
+  setTab?: (tab: string) => void;
+}
+
+export default function FAQsView({ setTab }: FAQsViewProps) {
   const [activeFAQ, setActiveFAQ] = useState<number | null>(null);
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -505,17 +509,60 @@ Thank you for your inquiry: "${aiPrompt}". Our clinical breeding directors scree
                 Our Breeder Concierge team is standing by to assist with lineage certifications, shipping pathways, and dynamic parent temperament logs.
               </p>
               
-              <div className="pt-4">
+              <div className="pt-4 flex flex-wrap items-center justify-center gap-3">
                 <button 
                   onClick={() => setChatOpen(true)}
-                  className="px-8 py-4 bg-gold-500 text-navy-950 hover:bg-gold-400 font-black text-xs rounded-2xl shadow-xl transition-all tracking-widest uppercase"
+                  className="px-8 py-4 bg-gold-500 text-navy-950 hover:bg-gold-400 font-black text-xs rounded-2xl shadow-xl transition-all tracking-widest uppercase active:scale-95"
                 >
-                  CHAT WITH OUR BREEDERS (LIVE SIMULATOR)
+                  CHAT WITH OUR BREEDERS
                 </button>
+                {setTab && (
+                  <button 
+                    onClick={() => { setTab('contact'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                    className="px-6 py-4 bg-white/10 hover:bg-white/20 text-white font-bold text-xs rounded-2xl transition-all active:scale-95 flex items-center gap-2"
+                  >
+                    <span>Contact Us Directly →</span>
+                  </button>
+                )}
               </div>
             </div>
           </div>
         </section>
+
+        {/* QUICK CROSS NAVIGATION */}
+        {setTab && (
+          <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div className="bg-navy-950 text-white rounded-3xl p-8 border border-gold-500/30 shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
+              <div>
+                <span className="text-[10px] font-mono font-black text-gold-400 uppercase tracking-widest bg-gold-500/10 px-3 py-1 rounded-full border border-gold-500/20">
+                  Ready to Move Forward?
+                </span>
+                <h3 className="text-xl font-black mt-2">Find Your Puppy or Review the Adoption Process</h3>
+                <p className="text-stone-300 text-xs mt-1">Jump to any part of our site with 1-click navigation.</p>
+              </div>
+              <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                <button
+                  onClick={() => { setTab('process'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                  className="px-5 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs transition-all active:scale-95 flex items-center gap-2"
+                >
+                  <span>← Adoption Process</span>
+                </button>
+                <button
+                  onClick={() => { setTab('puppies'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                  className="px-6 py-3 rounded-2xl bg-gold-500 hover:bg-gold-400 text-navy-950 font-black text-xs uppercase tracking-wider shadow-lg transition-all active:scale-95 flex items-center gap-2"
+                >
+                  <span>Available Puppies →</span>
+                </button>
+                <button
+                  onClick={() => { setTab('apply'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                  className="px-5 py-3 rounded-2xl bg-white text-navy-950 hover:bg-gold-500 font-black text-xs uppercase tracking-wider rounded-2xl transition-all active:scale-95"
+                >
+                  <span>Apply Now →</span>
+                </button>
+              </div>
+            </div>
+          </section>
+        )}
 
       </div>
 

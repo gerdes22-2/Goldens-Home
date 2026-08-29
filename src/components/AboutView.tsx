@@ -8,7 +8,11 @@ import {
 import HealthAuditView from './HealthAuditView';
 import { EditableImage } from './ImageEditContext';
 
-export default function AboutView() {
+interface AboutViewProps {
+  setTab?: (tab: string) => void;
+}
+
+export default function AboutView({ setTab }: AboutViewProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedParent, setSelectedParent] = useState<string | null>(null);
   const [activeStage, setActiveStage] = useState<number>(0);
@@ -488,6 +492,41 @@ export default function AboutView() {
           ))}
         </motion.div>
       </section>
+
+      {/* DIRECT PAGE ACTION LINKS */}
+      {setTab && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="bg-gradient-to-r from-navy-950 to-navy-900 rounded-3xl p-8 border border-gold-500/30 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
+            <div>
+              <span className="text-[10px] font-mono font-black text-gold-400 uppercase tracking-widest bg-gold-500/10 px-3 py-1 rounded-full border border-gold-500/20">
+                Continue Your Journey
+              </span>
+              <h3 className="text-xl font-black mt-2">Ready to Meet Our Bloodlines & Puppies?</h3>
+              <p className="text-stone-300 text-xs mt-1">Jump directly to any section of our ranch program below.</p>
+            </div>
+            <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+              <button
+                onClick={() => { setTab('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                className="px-5 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs transition-all active:scale-95 flex items-center gap-2"
+              >
+                <span>🏠 Home</span>
+              </button>
+              <button
+                onClick={() => { setTab('parents'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                className="px-5 py-3 rounded-2xl bg-white/10 hover:bg-gold-500 hover:text-navy-950 text-white font-bold text-xs transition-all active:scale-95 flex items-center gap-2"
+              >
+                <span>Breeder Parents →</span>
+              </button>
+              <button
+                onClick={() => { setTab('puppies'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                className="px-6 py-3 rounded-2xl bg-gold-500 hover:bg-gold-400 text-navy-950 font-black text-xs uppercase tracking-wider shadow-lg transition-all active:scale-95 flex items-center gap-2"
+              >
+                <span>Available Puppies →</span>
+              </button>
+            </div>
+          </div>
+        </section>
+      )}
 
     </div>
   );
