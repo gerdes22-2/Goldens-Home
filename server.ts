@@ -84,30 +84,78 @@ async function startServer() {
   // API: Get custom images
   app.get("/api/custom-images", async (req, res) => {
     try {
+      // 1. Try reading from disk file first
+      const jsonPath = path.join(process.cwd(), 'src', 'custom_images.json');
+      if (fs.existsSync(jsonPath)) {
+        try {
+          const fileData = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+          return res.json(fileData);
+        } catch (e) {
+          console.warn("Could not parse custom_images.json from disk:", e);
+        }
+      }
+
+      // 2. Fallback to Firestore
       const docRef = doc(db, 'settings', 'custom_images');
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
-        return res.json(docSnap.data());
+        const data = docSnap.data();
+        if (data?.images) {
+          try {
+            return res.json(JSON.parse(data.images));
+          } catch (e) {
+            return res.json(data);
+          }
+        }
+        return res.json(data || {});
       }
       return res.json({});
     } catch (error) {
       console.error("Failed to read custom images:", error);
-      return res.status(500).json({ error: "Failed to read custom images" });
+      return res.json({});
     }
   });
 
   app.post("/api/custom-images", async (req, res) => {
     try {
-      await setDoc(doc(db, 'settings', 'custom_images'), req.body);
-      console.log("Successfully saved updated custom images to Firebase!");
+      const payload = req.body || {};
+      
+      // 1. Persist to disk src/custom_images.json so it's checked into Git / deployed
+      try {
+        const jsonPath = path.join(process.cwd(), 'src', 'custom_images.json');
+        fs.writeFileSync(jsonPath, JSON.stringify(payload, null, 2), 'utf8');
+      } catch (fsErr) {
+        console.warn("Could not write custom_images.json to disk:", fsErr);
+      }
+
+      // 2. Sanitize payload for Firestore (ensure no gigantic base64 exceeds the 1MB document limit)
+      const sanitized: Record<string, string> = {};
+      for (const [k, v] of Object.entries(payload)) {
+        if (typeof v === 'string') {
+          // If string is under 300KB or is a URL, keep it
+          if (!v.startsWith('data:') || v.length < 300000) {
+            sanitized[k] = v;
+          }
+        }
+      }
+
+      const stringified = JSON.stringify(sanitized);
+      if (stringified.length < 850000) {
+        await setDoc(doc(db, 'settings', 'custom_images'), {
+          images: stringified,
+          updatedAt: new Date().toISOString()
+        });
+        console.log("Successfully saved updated custom images to Firestore!");
+      }
+
       return res.json({ success: true });
     } catch (error) {
-      console.error("Failed to save custom images:", error);
-      return res.status(500).json({ error: "Failed to save custom images" });
+      console.warn("Custom images sync notice:", error);
+      return res.json({ success: true, warning: "Saved locally" });
     }
   });
 
-  // API: Cloudinary Secure Permanent Image Upload
+  // API: Cloudinary & Local Resilient Permanent Image Upload
   app.post("/api/upload-image", async (req, res) => {
     try {
       const { image } = req.body;
@@ -115,72 +163,105 @@ async function startServer() {
         return res.status(400).json({ error: "No image data provided" });
       }
 
-      let cloudName = process.env.CLOUDINARY_CLOUD_NAME;
-      let apiKey = process.env.CLOUDINARY_API_KEY;
-      let apiSecret = process.env.CLOUDINARY_API_SECRET;
+      // If it's already an HTTP URL or local path, return as is
+      if (!image.startsWith("data:")) {
+        return res.json({ success: true, url: image });
+      }
+
+      let cloudName = process.env.CLOUDINARY_CLOUD_NAME?.trim().replace(/^['"]|['"]$/g, '');
+      let apiKey = process.env.CLOUDINARY_API_KEY?.trim().replace(/^['"]|['"]$/g, '');
+      let apiSecret = process.env.CLOUDINARY_API_SECRET?.trim().replace(/^['"]|['"]$/g, '');
 
       // Extract credentials from CLOUDINARY_URL if provided
-      const cloudinaryUrl = process.env.CLOUDINARY_URL;
+      const cloudinaryUrl = process.env.CLOUDINARY_URL?.trim();
       if (cloudinaryUrl && cloudinaryUrl.startsWith("cloudinary://")) {
         try {
-          // Format: cloudinary://api_key:api_secret@cloud_name
-          const match = cloudinaryUrl.match(/cloudinary:\/\/([^:]+):([^@]+)@(.+)/);
+          const match = cloudinaryUrl.match(/cloudinary:\/\/([^:]+):([^@]+)@([^/?#]+)/);
           if (match) {
-            apiKey = apiKey || match[1];
-            apiSecret = apiSecret || match[2];
-            cloudName = cloudName || match[3];
-            console.log("Successfully extracted Cloudinary config from CLOUDINARY_URL. Cloud Name:", cloudName);
+            apiKey = apiKey || match[1].trim();
+            apiSecret = apiSecret || match[2].trim();
+            cloudName = cloudName || match[3].trim();
+            console.log("Parsed Cloudinary credentials from CLOUDINARY_URL. Cloud Name:", cloudName);
           }
         } catch (e) {
           console.error("Failed to parse CLOUDINARY_URL connection string:", e);
         }
       }
 
-      if (!cloudName || !apiKey || !apiSecret) {
-        console.warn("Cloudinary configuration missing. Storing locally as fallback.");
+      // Try Cloudinary upload if all 3 keys are present
+      if (cloudName && apiKey && apiSecret) {
+        try {
+          const timestamp = Math.round(new Date().getTime() / 1000);
+          const paramsToSign = `timestamp=${timestamp}${apiSecret}`;
+          const signature = crypto.createHash("sha1").update(paramsToSign).digest("hex");
+
+          const formData = new URLSearchParams();
+          formData.append("file", image);
+          formData.append("timestamp", timestamp.toString());
+          formData.append("api_key", apiKey);
+          formData.append("signature", signature);
+
+          const cloudinaryResponse = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+            method: "POST",
+            body: formData,
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded"
+            }
+          });
+
+          if (cloudinaryResponse.ok) {
+            const uploadResult = await cloudinaryResponse.json();
+            if (uploadResult.secure_url) {
+              console.log("Successfully uploaded image to Cloudinary! URL:", uploadResult.secure_url);
+              return res.json({ 
+                success: true, 
+                url: uploadResult.secure_url 
+              });
+            }
+          } else {
+            const errorText = await cloudinaryResponse.text();
+            console.warn("Cloudinary upload returned non-200 response, switching to local asset storage:", errorText);
+          }
+        } catch (cloudErr) {
+          console.warn("Cloudinary request failed, switching to local asset storage:", cloudErr);
+        }
+      }
+
+      // Local asset storage fallback: Save the image directly to public/images/
+      try {
+        const matches = image.match(/^data:image\/([a-zA-Z0-9+]+);base64,(.+)$/);
+        let ext = 'jpg';
+        let base64Data = image;
+        if (matches) {
+          ext = matches[1] === 'jpeg' ? 'jpg' : matches[1];
+          base64Data = matches[2];
+        }
+        const filename = `uploaded_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${ext}`;
+        const dirPath = path.join(process.cwd(), 'public', 'images');
+        if (!fs.existsSync(dirPath)) {
+          fs.mkdirSync(dirPath, { recursive: true });
+        }
+        fs.writeFileSync(path.join(dirPath, filename), Buffer.from(base64Data, 'base64'));
+        const localUrl = `/images/${filename}`;
+        console.log("Saved image to disk as permanent static asset:", localUrl);
+        
+        return res.json({ 
+          success: true, 
+          url: localUrl, 
+          message: "Stored permanently as a local asset in /public/images/" 
+        });
+      } catch (diskErr: any) {
+        console.error("Failed to write image to disk:", diskErr);
         return res.json({ 
           success: true, 
           url: image, 
-          message: "Saved locally. Configure Cloudinary credentials in Settings to store online permanently!" 
+          message: "Stored in memory" 
         });
       }
 
-      // Generate a signed upload payload to Cloudinary
-      const timestamp = Math.round(new Date().getTime() / 1000);
-      const paramsToSign = `timestamp=${timestamp}${apiSecret}`;
-      const signature = crypto.createHash("sha1").update(paramsToSign).digest("hex");
-
-      const formData = new URLSearchParams();
-      formData.append("file", image);
-      formData.append("timestamp", timestamp.toString());
-      formData.append("api_key", apiKey);
-      formData.append("signature", signature);
-
-      const cloudinaryResponse = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-        method: "POST",
-        body: formData,
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded"
-        }
-      });
-
-      if (!cloudinaryResponse.ok) {
-        const errorText = await cloudinaryResponse.text();
-        console.error("Cloudinary upload failed:", errorText);
-        throw new Error(`Cloudinary error ${cloudinaryResponse.status}: ${errorText}`);
-      }
-
-      const uploadResult = await cloudinaryResponse.json();
-      console.log("Successfully uploaded image to Cloudinary! URL:", uploadResult.secure_url);
-      
-      return res.json({ 
-        success: true, 
-        url: uploadResult.secure_url 
-      });
-
     } catch (error: any) {
-      console.error("Failed to upload image:", error);
-      return res.status(500).json({ error: "Failed to upload image to permanent cloud storage", details: error.message });
+      console.error("Failed to process image upload:", error);
+      return res.status(500).json({ error: "Failed to process image upload", details: error.message });
     }
   });
 

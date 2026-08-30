@@ -49,38 +49,59 @@ export function ImageEditProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const loadImages = async () => {
       try {
-        const stored = localStorage.getItem('golden_paws_custom_images');
-        const localImages = stored ? JSON.parse(stored) : {};
-
-        // 1. Initial state from static import
-        let currentServerImages = { ...serverCustomImages };
-
-        // 2. Try fetching from Firestore dynamically
+        let localImages: Record<string, string> = {};
         try {
-          const docRef = doc(db, 'settings', 'custom_images');
-          const docSnap = await getDoc(docRef);
-          if (docSnap.exists()) {
-            const data = docSnap.data();
-            if (data && data.images) {
-              const apiImages = JSON.parse(data.images);
-              currentServerImages = { ...currentServerImages, ...apiImages };
+          const stored = localStorage.getItem('golden_paws_custom_images');
+          if (stored) {
+            localImages = JSON.parse(stored);
+            // Clean up any oversized legacy base64 strings in localStorage
+            let cleaned = false;
+            for (const [k, v] of Object.entries(localImages)) {
+              if (typeof v === 'string' && v.startsWith('data:') && v.length > 300000) {
+                delete localImages[k];
+                cleaned = true;
+              }
+            }
+            if (cleaned) {
+              localStorage.setItem('golden_paws_custom_images', JSON.stringify(localImages));
             }
           }
-        } catch (fetchErr) {
-          console.warn('Could not fetch custom images from Firestore, falling back to static imports:', fetchErr);
+        } catch (storageErr) {
+          console.warn('Could not read localStorage custom images:', storageErr);
+        }
+
+        // 1. Initial state from static import
+        let currentServerImages: Record<string, string> = { ...serverCustomImages };
+
+        // 2. Fetch from server API or Firestore dynamically
+        try {
+          const apiRes = await fetch('/api/custom-images');
+          if (apiRes.ok) {
+            const apiData = await apiRes.json();
+            if (apiData && typeof apiData === 'object') {
+              currentServerImages = { ...currentServerImages, ...apiData };
+            }
+          }
+        } catch (apiErr) {
+          // Fallback to direct Firestore get
+          try {
+            const docRef = doc(db, 'settings', 'custom_images');
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+              const data = docSnap.data();
+              if (data && data.images) {
+                const parsed = JSON.parse(data.images);
+                currentServerImages = { ...currentServerImages, ...parsed };
+              }
+            }
+          } catch (fetchErr) {
+            console.warn('Could not fetch custom images from Firestore:', fetchErr);
+          }
         }
 
         // 3. Merge: Local storage overrides server-side configurations
         const merged = { ...currentServerImages, ...localImages };
         setCustomImages(merged);
-
-        // 4. Proactively sync browser local customs to the server if they are missing on the server
-        const hasLocalCustoms = Object.keys(localImages).length > 0;
-        const diffExists = JSON.stringify(currentServerImages) !== JSON.stringify(merged);
-        if (hasLocalCustoms && diffExists) {
-          // In Firestore with rules we can't write unauthenticated. 
-          // Admin sync logic should ideally be triggered manually. We will skip auto-sync for non-admins.
-        }
       } catch (e) {
         console.error('Failed to load custom images process', e);
         setCustomImages(serverCustomImages || {});
@@ -93,7 +114,7 @@ export function ImageEditProvider({ children }: { children: React.ReactNode }) {
   const saveCustomImage = async (idOrSrc: string, newSrc: string) => {
     let finalSrc = newSrc;
     
-    // If it's a base64 image, attempt to upload to Cloudinary via server-side secure proxy
+    // If it's a base64 image, upload to server permanent storage (Cloudinary or local static asset)
     if (newSrc.startsWith('data:')) {
       try {
         const uploadRes = await fetch('/api/upload-image', {
@@ -106,33 +127,54 @@ export function ImageEditProvider({ children }: { children: React.ReactNode }) {
         
         if (uploadRes.ok) {
           const data = await uploadRes.json();
-          if (data.success && data.url && !data.url.startsWith('data:')) {
+          if (data.success && data.url) {
             finalSrc = data.url;
-            console.log('Successfully uploaded image to Cloudinary and replaced with URL:', finalSrc);
+            console.log('Successfully saved image and obtained permanent asset URL:', finalSrc);
           }
         }
       } catch (uploadErr) {
-        console.warn('Failed to upload image to Cloudinary, falling back to local base64 storage:', uploadErr);
+        console.warn('Server upload fallback, utilizing compressed client format:', uploadErr);
       }
     }
 
     const updated = { ...customImages, [idOrSrc]: finalSrc };
     setCustomImages(updated);
+
     try {
       localStorage.setItem('golden_paws_custom_images', JSON.stringify(updated));
     } catch (e) {
-      console.error('Failed to save to localStorage', e);
-      alert('Local storage is full or disabled! If you uploaded a massive image file, please try pasting an image URL instead.');
+      console.warn('Local storage write warning:', e);
     }
 
-    // Persist to server workspace JSON file via Firestore
+    // Sync to server backend & JSON file
     try {
-      await setDoc(doc(db, 'settings', 'custom_images'), {
-        images: JSON.stringify(updated)
+      await fetch('/api/custom-images', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updated)
       });
-      console.log('Successfully saved custom image to Firestore.');
+    } catch (apiErr) {
+      console.warn('API custom images sync notice:', apiErr);
+    }
+
+    // Persist safely to Firestore only if safely under the 1MB document limit
+    try {
+      const sanitizedForFirestore: Record<string, string> = {};
+      for (const [k, v] of Object.entries(updated)) {
+        if (typeof v === 'string' && (!v.startsWith('data:') || v.length < 250000)) {
+          sanitizedForFirestore[k] = v;
+        }
+      }
+      const stringified = JSON.stringify(sanitizedForFirestore);
+      if (stringified.length < 800000) {
+        await setDoc(doc(db, 'settings', 'custom_images'), {
+          images: stringified,
+          updatedAt: new Date().toISOString()
+        });
+        console.log('Custom image mapping synced to Firestore.');
+      }
     } catch (err) {
-      console.error('Could not sync custom images to backend:', err);
+      console.warn('Firestore settings document sync notice:', err);
     }
   };
 
@@ -143,11 +185,22 @@ export function ImageEditProvider({ children }: { children: React.ReactNode }) {
       setEditMode(false);
 
       try {
+        await fetch('/api/custom-images', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({})
+        });
+      } catch (apiErr) {
+        console.warn('API reset notice:', apiErr);
+      }
+
+      try {
         await setDoc(doc(db, 'settings', 'custom_images'), {
-          images: JSON.stringify({})
+          images: JSON.stringify({}),
+          updatedAt: new Date().toISOString()
         });
       } catch (err) {
-        console.error('Could not reset custom images on server:', err);
+        console.warn('Firestore reset notice:', err);
       }
     }
   };
