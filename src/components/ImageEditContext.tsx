@@ -2,6 +2,9 @@ import React, { createContext, useContext, useState, useEffect, useRef } from 'r
 import { motion, AnimatePresence } from 'motion/react';
 import { Camera, Upload, Globe, Image as ImageIcon, Check, X, RefreshCw, Eye, Sparkles, Sliders, Shield } from 'lucide-react';
 import serverCustomImages from '../custom_images.json';
+import { useAdminAuth } from './AdminAuthContext';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { db } from '../firebase';
 
 // Pre-existing ranch assets that can be chosen from the library
 const PREBUILT_LOCKED_IMAGES = [
@@ -24,7 +27,7 @@ interface ImageEditContextType {
   saveCustomImage: (idOrSrc: string, newSrc: string) => void;
   resetCustomImages: () => void;
   openEditor: (idOrSrc: string, currentSrc: string) => void;
-  resolveImage: (idOrSrc: string) => string;
+  resolveImage: (idOrSrc: string, fallbackSrc?: string) => string;
 }
 
 const ImageEditContext = createContext<ImageEditContextType | undefined>(undefined);
@@ -52,15 +55,19 @@ export function ImageEditProvider({ children }: { children: React.ReactNode }) {
         // 1. Initial state from static import
         let currentServerImages = { ...serverCustomImages };
 
-        // 2. Try fetching from the server API dynamically
+        // 2. Try fetching from Firestore dynamically
         try {
-          const res = await fetch('/api/custom-images');
-          if (res.ok) {
-            const apiImages = await res.json();
-            currentServerImages = { ...currentServerImages, ...apiImages };
+          const docRef = doc(db, 'settings', 'custom_images');
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            if (data && data.images) {
+              const apiImages = JSON.parse(data.images);
+              currentServerImages = { ...currentServerImages, ...apiImages };
+            }
           }
         } catch (fetchErr) {
-          console.warn('Could not fetch custom images from live API, falling back to static imports:', fetchErr);
+          console.warn('Could not fetch custom images from Firestore, falling back to static imports:', fetchErr);
         }
 
         // 3. Merge: Local storage overrides server-side configurations
@@ -71,18 +78,8 @@ export function ImageEditProvider({ children }: { children: React.ReactNode }) {
         const hasLocalCustoms = Object.keys(localImages).length > 0;
         const diffExists = JSON.stringify(currentServerImages) !== JSON.stringify(merged);
         if (hasLocalCustoms && diffExists) {
-          try {
-            await fetch('/api/custom-images', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify(merged)
-            });
-            console.log('Successfully synchronized client custom images to server workspace!');
-          } catch (syncErr) {
-            console.error('Failed to sync browser customizations to server:', syncErr);
-          }
+          // In Firestore with rules we can't write unauthenticated. 
+          // Admin sync logic should ideally be triggered manually. We will skip auto-sync for non-admins.
         }
       } catch (e) {
         console.error('Failed to load custom images process', e);
@@ -128,15 +125,12 @@ export function ImageEditProvider({ children }: { children: React.ReactNode }) {
       alert('Local storage is full or disabled! If you uploaded a massive image file, please try pasting an image URL instead.');
     }
 
-    // Persist to server workspace JSON file
+    // Persist to server workspace JSON file via Firestore
     try {
-      await fetch('/api/custom-images', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(updated)
+      await setDoc(doc(db, 'settings', 'custom_images'), {
+        images: JSON.stringify(updated)
       });
+      console.log('Successfully saved custom image to Firestore.');
     } catch (err) {
       console.error('Could not sync custom images to backend:', err);
     }
@@ -149,12 +143,8 @@ export function ImageEditProvider({ children }: { children: React.ReactNode }) {
       setEditMode(false);
 
       try {
-        await fetch('/api/custom-images', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({})
+        await setDoc(doc(db, 'settings', 'custom_images'), {
+          images: JSON.stringify({})
         });
       } catch (err) {
         console.error('Could not reset custom images on server:', err);
@@ -166,8 +156,10 @@ export function ImageEditProvider({ children }: { children: React.ReactNode }) {
     setEditingImage({ idOrSrc, currentSrc });
   };
 
-  const resolveImage = (idOrSrc: string) => {
-    return customImages[idOrSrc] || idOrSrc;
+  const resolveImage = (idOrSrc: string, fallbackSrc?: string) => {
+    if (customImages[idOrSrc]) return customImages[idOrSrc];
+    if (fallbackSrc && customImages[fallbackSrc]) return customImages[fallbackSrc];
+    return fallbackSrc || idOrSrc;
   };
 
   return (
@@ -215,7 +207,7 @@ function GlobalEditModeToggler() {
   }, [customImages]);
 
   return (
-    <div className="fixed bottom-24 left-8 z-[50] flex flex-col gap-2 items-start">
+    <div className="fixed bottom-24 left-6 z-[60] flex flex-col gap-2 items-start pointer-events-auto">
       {/* Dynamic Count Notification */}
       <AnimatePresence>
         {showNotification && (
@@ -226,7 +218,7 @@ function GlobalEditModeToggler() {
             className="bg-navy-950 text-white text-[11px] font-medium px-4 py-2 rounded-2xl shadow-xl border border-gold-400/30 flex items-center gap-2"
           >
             <Sparkles className="w-3.5 h-3.5 text-gold-400 animate-pulse" />
-            <span>Active Customizations: <strong>{Object.keys(customImages).length}</strong> images saved</span>
+            <span>Active Customizations: <strong>{Object.keys(customImages).length}</strong> images replaced</span>
             <button onClick={() => setShowNotification(false)} className="hover:text-gold-400 ml-1">
               <X className="w-3 h-3" />
             </button>
@@ -234,9 +226,26 @@ function GlobalEditModeToggler() {
         )}
       </AnimatePresence>
 
-      <div className="flex items-center gap-2 bg-white/95 backdrop-blur-md px-4 py-3 rounded-full shadow-2xl border border-stone-200/80">
+      {/* Edit Mode Active Banner */}
+      <AnimatePresence>
+        {isEditMode && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            className="bg-gradient-to-r from-navy-950 to-navy-900 text-white text-xs font-semibold px-4 py-2.5 rounded-2xl shadow-2xl border-2 border-gold-400 flex items-center gap-2.5 max-w-xs"
+          >
+            <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping shrink-0" />
+            <span className="text-[11px] leading-tight">
+              <strong>Image Editor is ACTIVE:</strong> Click any photo on the site to replace it!
+            </span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <div className="flex items-center gap-2 bg-white/95 backdrop-blur-md px-4 py-2.5 rounded-full shadow-2xl border border-stone-200/90 hover:border-gold-400 transition-all">
         <div className="flex items-center gap-2">
-          <div className={`w-2.5 h-2.5 rounded-full ${isEditMode ? 'bg-emerald-500 animate-ping' : 'bg-amber-500'}`} />
+          <div className={`w-2.5 h-2.5 rounded-full ${isEditMode ? 'bg-emerald-500 animate-ping' : 'bg-gold-500'}`} />
           <span className="text-[10px] font-mono font-black text-stone-700 uppercase tracking-widest">
             {isEditMode ? 'Editor: Active' : 'Image Editor'}
           </span>
@@ -246,20 +255,20 @@ function GlobalEditModeToggler() {
 
         <button
           onClick={() => setEditMode(!isEditMode)}
-          className={`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider transition-all duration-300 ${
+          className={`px-3.5 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider transition-all duration-300 shadow-sm cursor-pointer ${
             isEditMode 
-              ? 'bg-[#0d2244] text-white' 
-              : 'bg-gold-500 hover:bg-gold-400 text-navy-950'
+              ? 'bg-emerald-600 hover:bg-emerald-700 text-white ring-2 ring-emerald-400/30' 
+              : 'bg-gold-500 hover:bg-gold-400 text-navy-950 font-extrabold'
           }`}
         >
-          {isEditMode ? 'Exit Editor' : 'Enable Edit'}
+          {isEditMode ? 'Done Editing' : '✏️ Replace Images'}
         </button>
 
         {Object.keys(customImages).length > 0 && (
           <button
             onClick={resetCustomImages}
             title="Revert all customized images back to default"
-            className="p-2 text-stone-400 hover:text-red-500 transition-colors rounded-full hover:bg-stone-100"
+            className="p-1.5 text-stone-400 hover:text-red-500 transition-colors rounded-full hover:bg-stone-100 cursor-pointer"
           >
             <RefreshCw className="w-3.5 h-3.5" />
           </button>
@@ -676,7 +685,7 @@ export function EditableImage({ imageId, src, className, alt, loading, ...props 
   
   // Use unique imageId if specified, else fall back to the raw source path as key
   const effectiveId = imageId || src || '';
-  const resolvedSrc = resolveImage(effectiveId);
+  const resolvedSrc = resolveImage(effectiveId, src);
 
   if (!isEditMode) {
     return (
@@ -686,40 +695,48 @@ export function EditableImage({ imageId, src, className, alt, loading, ...props 
         alt={alt}
         loading={loading}
         referrerPolicy="no-referrer"
+        title="Double-click to customize photo with the Editor"
+        onDoubleClick={(e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          openEditor(effectiveId, resolvedSrc);
+        }}
         {...props}
       />
     );
   }
 
   return (
-    <div className="group relative" style={{ display: 'contents' }}>
-      {/* Wrapper enclosing standard image to support overlays properly */}
-      <div className={`relative overflow-hidden inline-block ${className || 'w-full h-full'}`}>
-        <img
-          src={resolvedSrc}
-          className="w-full h-full object-cover"
-          alt={alt}
-          loading={loading}
-          referrerPolicy="no-referrer"
-          {...props}
-        />
-        
-        {/* Hover Pencil/Camera trigger overlay */}
-        <div 
-          onClick={(e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            openEditor(effectiveId, resolvedSrc);
-          }}
-          className="absolute inset-0 bg-black/50 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all duration-200 flex flex-col items-center justify-center cursor-pointer z-30"
-        >
-          <div className="p-3 bg-gold-500 text-navy-950 rounded-full shadow-2xl scale-95 md:scale-75 group-hover:scale-100 transition-transform duration-300">
-            <Camera className="w-5 h-5 stroke-[2.5]" />
-          </div>
-          <span className="text-white text-[9px] font-mono font-black uppercase tracking-wider mt-2.5 bg-black/40 px-2.5 py-1 rounded-full border border-white/15">
-            Replace Image
-          </span>
+    <div 
+      className="relative group overflow-hidden inline-block w-full h-full ring-2 ring-gold-400 ring-offset-1 rounded-inherit cursor-pointer select-none"
+      onClick={(e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        openEditor(effectiveId, resolvedSrc);
+      }}
+    >
+      <img
+        src={resolvedSrc}
+        className={`${className || 'w-full h-full object-cover'} group-hover:scale-105 transition-transform duration-300`}
+        alt={alt}
+        loading={loading}
+        referrerPolicy="no-referrer"
+        {...props}
+      />
+      
+      {/* Visual Camera Action Overlay */}
+      <div className="absolute inset-0 bg-navy-950/40 group-hover:bg-navy-950/65 transition-all duration-200 flex flex-col items-center justify-center p-2 z-30">
+        <div className="p-3 bg-gold-500 text-navy-950 rounded-full shadow-2xl scale-90 group-hover:scale-110 transition-transform duration-300 border-2 border-white">
+          <Camera className="w-5 h-5 stroke-[2.5]" />
         </div>
+        <span className="text-white text-[10px] font-mono font-black uppercase tracking-wider mt-2 bg-black/60 px-3 py-1 rounded-full border border-white/20 shadow-md">
+          Click to Replace
+        </span>
+      </div>
+
+      {/* Top right corner badge */}
+      <div className="absolute top-2 right-2 bg-gold-500 text-navy-950 px-2 py-0.5 rounded-md text-[9px] font-mono font-black uppercase tracking-wider shadow z-30 pointer-events-none">
+        Editable
       </div>
     </div>
   );

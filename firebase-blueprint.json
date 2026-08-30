@@ -1,0 +1,54 @@
+{
+  "entities": {
+    "Application": {
+      "title": "Application",
+      "description": "Puppy adoption application",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "fullName": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "homeType": { "type": "string" },
+        "status": { "type": "string" }
+      },
+      "required": ["id", "fullName", "email"]
+    },
+    "Message": {
+      "title": "Message",
+      "description": "Contact form message",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "message": { "type": "string" },
+        "submittedAt": { "type": "string" }
+      },
+      "required": ["id", "name", "email", "message"]
+    },
+    "CustomImages": {
+      "title": "CustomImages",
+      "description": "Custom edited images mapping",
+      "type": "object",
+      "properties": {
+        "images": { "type": "string" }
+      }
+    }
+  },
+  "firestore": {
+    "applications": {
+      "schema": "Application",
+      "description": "Stores adoption applications"
+    },
+    "messages": {
+      "schema": "Message",
+      "description": "Stores contact form messages"
+    },
+    "settings": {
+      "schema": "CustomImages",
+      "description": "Stores global app settings like custom images"
+    }
+  }
+}

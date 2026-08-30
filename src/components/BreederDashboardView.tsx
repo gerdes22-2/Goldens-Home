@@ -5,7 +5,10 @@ import {
   MessageSquare, Settings, Search, Eye, Sparkles, Award, Lock,
   DollarSign, Calendar, Heart, ShieldAlert, Check, Plus, AlertCircle, RefreshCw, Layers, Trash2, Sliders, ChevronRight
 } from 'lucide-react';
+import { collection, getDocs, doc, updateDoc, getDoc, setDoc } from 'firebase/firestore';
+import { db } from '../firebase';
 import { AdoptionApplication } from '../types';
+import { useAdminAuth } from './AdminAuthContext';
 
 interface ContactMessage {
   id: string;
@@ -213,8 +216,8 @@ const INITIAL_LITTERS: Litter[] = [
 ];
 
 export default function BreederDashboardView({ setTab }: BreederDashboardViewProps) {
-  const [authorized, setAuthorized] = useState(false);
-  const [passcode, setPasscode] = useState('');
+  const { user, isAdmin, login, logout, authLoading } = useAdminAuth();
+  
   const [errorMsg, setErrorMsg] = useState('');
 
   const [applications, setApplications] = useState<AdoptionApplication[]>([]);
@@ -234,6 +237,8 @@ export default function BreederDashboardView({ setTab }: BreederDashboardViewPro
   } | null>(null);
   const [smtpTesting, setSmtpTesting] = useState(false);
   const [smtpTestResult, setSmtpTestResult] = useState<{ success: boolean; error?: string } | null>(null);
+  const [emailNotifsEnabled, setEmailNotifsEnabled] = useState(true);
+  const [savingNotifs, setSavingNotifs] = useState(false);
 
   // Waitlist Broadcast variables
   const [broadcastSubject, setBroadcastSubject] = useState('🐾 Luna & Sterling Litters: Progress & Selection Lock!');
@@ -279,7 +284,7 @@ Golden Paws Director`
     return saved ? JSON.parse(saved) : [
       { id: 'l1', timestamp: '08:15:20 AM', type: 'SYSTEM', text: 'Secure breeder console initialized successfully.' },
       { id: 'l2', timestamp: '08:15:22 AM', type: 'DB', text: 'Fetched applications and contact database.' },
-      { id: 'l3', timestamp: '08:15:23 AM', type: 'SMTP', text: 'Mail server handshake: listening in simulated logs mode.' },
+      { id: 'l3', timestamp: '08:15:23 AM', type: 'SMTP', text: 'Mail server handshake: listening in secure logs mode.' },
       { id: 'l4', timestamp: '08:16:01 AM', type: 'LITTER', text: 'Loaded 2 active breeding pairings.' }
     ];
   });
@@ -388,41 +393,26 @@ Golden Paws Director`
     }
   };
 
-  const handleAuth = (e: FormEvent) => {
-    e.preventDefault();
-    if (passcode === 'golden2026' || passcode === 'admin') {
-      setAuthorized(true);
-      setErrorMsg('');
-      logEvent('SYSTEM', 'Breeder Session unlocked via authorized security credentials.');
-    } else {
-      setErrorMsg('Incorrect secure passcode. Please try again.');
-    }
-  };
-
   const fetchSubmissions = async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/submissions');
-      if (res.ok) {
-        const data = await res.json();
-        const dbApps = data.applications || [];
-        
-        if (dbApps.length === 0) {
-          setApplications(SEED_APPLICATIONS);
-          logEvent('DB', 'No server applications found. Loaded 4 verified seed candidates.');
-        } else {
-          // Merge client-submitted with our lovely seeds to have a rich list
-          const merged = [...dbApps];
-          SEED_APPLICATIONS.forEach(seed => {
-            if (!merged.some(m => m.id === seed.id)) {
-              merged.push(seed);
-            }
-          });
-          setApplications(merged);
-          logEvent('DB', `Synchronized database records. Loaded ${merged.length} application portfolios.`);
-        }
-        setMessages(data.messages || []);
+      const appsSnap = await getDocs(collection(db, 'applications'));
+      const msgsSnap = await getDocs(collection(db, 'messages'));
+      const dbApps = appsSnap.docs.map(d => d.data() as AdoptionApplication);
+      const dbMsgs = msgsSnap.docs.map(d => d.data() as ContactMessage);
+      
+      if (dbApps.length === 0) {
+        setApplications(SEED_APPLICATIONS);
+      } else {
+        const merged = [...dbApps];
+        SEED_APPLICATIONS.forEach(seed => {
+          if (!merged.some(m => m.id === seed.id)) {
+            merged.push(seed);
+          }
+        });
+        setApplications(merged);
       }
+      setMessages(dbMsgs);
     } catch (err) {
       console.error('Failed to load submissions:', err);
     } finally {
@@ -430,31 +420,50 @@ Golden Paws Director`
     }
   };
 
+  const fetchSettings = async () => {
+    try {
+      const docSnap = await getDoc(doc(db, 'settings', 'notifications'));
+      if (docSnap.exists()) {
+        setEmailNotifsEnabled(docSnap.data().enabled !== false);
+      }
+    } catch (err) {
+      console.error('Failed to load settings:', err);
+    }
+  };
+
   useEffect(() => {
-    if (authorized) {
+    if (isAdmin) {
       fetchSubmissions();
       fetchSmtpStatus();
+      fetchSettings();
     }
-  }, [authorized]);
+  }, [isAdmin]);
+
+  const toggleEmailNotifs = async () => {
+    setSavingNotifs(true);
+    const newVal = !emailNotifsEnabled;
+    try {
+      await setDoc(doc(db, 'settings', 'notifications'), { enabled: newVal }, { merge: true });
+      setEmailNotifsEnabled(newVal);
+      logEvent('SYSTEM', `Admin email notifications ${newVal ? 'ENABLED' : 'DISABLED'}.`);
+    } catch (err) {
+      console.error("Failed to update notification settings", err);
+    } finally {
+      setSavingNotifs(false);
+    }
+  };
 
   const handleUpdateStatus = async (appId: string, newStatus: string) => {
     try {
-      const res = await fetch(`/api/applications/${appId}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ status: newStatus }),
-      });
-      if (res.ok) {
-        setApplications(prevApps => 
-          prevApps.map(app => app.id === appId ? { ...app, status: newStatus as any } : app)
-        );
-        if (selectedApp && selectedApp.id === appId) {
-          setSelectedApp(prev => prev ? { ...prev, status: newStatus as any } : null);
-        }
-        logEvent('DB', `Updated status of candidate portfolio (${appId}) to "${newStatus}".`);
+      const docRef = doc(db, 'applications', appId);
+      await updateDoc(docRef, { status: newStatus });
+      setApplications(prevApps => 
+        prevApps.map(app => app.id === appId ? { ...app, status: newStatus as any } : app)
+      );
+      if (selectedApp && selectedApp.id === appId) {
+        setSelectedApp(prev => prev ? { ...prev, status: newStatus as any } : null);
       }
+      logEvent('DB', `Updated status of candidate portfolio (${appId}) to "${newStatus}".`);
     } catch (err) {
       console.error('Failed to update status:', err);
     }
@@ -669,7 +678,17 @@ Golden Paws Director`
 
   const pendingCollection = Math.max(0, totalProjectedSales - totalSecuredDeposits);
 
-  if (!authorized) {
+  if (authLoading) {
+    return (
+      <div className="bg-[#fcfaf7] min-h-screen pt-36 pb-20 text-[#0d2244] flex items-center justify-center px-4">
+        <div className="max-w-md w-full bg-white rounded-3xl border border-gray-150/80 shadow-2xl p-8 sm:p-10 text-center space-y-6">
+          <div className="text-sm font-bold font-mono text-gray-500 uppercase">Checking Authorization...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAdmin) {
     return (
       <div className="bg-[#fcfaf7] min-h-screen pt-36 pb-20 text-[#0d2244] flex items-center justify-center px-4">
         <div className="max-w-md w-full bg-white rounded-3xl border border-gray-150/80 shadow-2xl p-8 sm:p-10 text-center space-y-6">
@@ -679,34 +698,36 @@ Golden Paws Director`
           <div className="space-y-2">
             <h1 className="text-2xl font-black">Breeder Workspace</h1>
             <p className="text-xs text-gray-500">
-              Enter your secure passcode to view puppy reservations, contact messages, and configure email alert settings.
+              Please sign in with your authorized Google account to view puppy reservations, contact messages, and configure site settings.
             </p>
           </div>
 
-          <form onSubmit={handleAuth} className="space-y-4">
-            <div className="space-y-1 text-left">
-              <label className="text-[9px] font-mono font-black uppercase tracking-widest text-gray-400">Security Passcode</label>
-              <input
-                type="password"
-                placeholder="Enter Passcode..."
-                value={passcode}
-                onChange={(e) => setPasscode(e.target.value)}
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 focus:border-gold-500 rounded-xl text-xs focus:outline-none"
-                autoFocus
-              />
-            </div>
-
+          <div className="space-y-4">
+            {user && !isAdmin && (
+              <div className="p-4 bg-red-50 text-red-600 rounded-xl text-xs font-medium">
+                The account <strong>{user.email}</strong> is not authorized to access this dashboard.
+              </div>
+            )}
+            
             {errorMsg && (
               <p className="text-red-500 text-[10px] font-mono font-bold uppercase">{errorMsg}</p>
             )}
 
             <button
-              type="submit"
+              onClick={login}
               className="w-full py-3.5 bg-navy-950 text-white hover:bg-gold-500 hover:text-navy-950 rounded-xl font-mono text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer"
             >
-              UNLOCK WORKSPACE
+              Sign In with Google
             </button>
-          </form>
+            {user && (
+              <button
+                onClick={logout}
+                className="text-xs text-gray-400 hover:text-gray-600 font-bold transition-colors"
+              >
+                Sign Out
+              </button>
+            )}
+          </div>
         </div>
       </div>
     );
@@ -725,7 +746,7 @@ Golden Paws Director`
             <h1 className="text-3xl font-black tracking-tight mt-1">Breeder Administration Console</h1>
           </div>
           <button
-            onClick={() => { setAuthorized(false); setPasscode(''); }}
+            onClick={logout}
             className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl text-xs font-mono font-bold uppercase tracking-wider text-gray-500 transition-all"
           >
             Lock Dashboard
@@ -1762,7 +1783,7 @@ Golden Paws Director`
               </span>
               <h2 className="text-xl font-black">Enable Direct Email Notifications</h2>
               <p className="text-xs text-gray-500">
-                You can easily connect your own email service (SMTP or Gmail) to your application. When configured, submissions on your contact page and waitlist reservations are emailed instantly to your primary address: <strong className="font-bold text-navy-950">goldenpupshome22@gmail.com</strong>.
+                When configured, submissions on your contact page and waitlist reservations are emailed instantly to your official business address: <strong className="font-bold text-navy-950">goldenpupshome22@gmail.com</strong>.
               </p>
             </div>
 
@@ -1788,7 +1809,7 @@ Golden Paws Director`
                   </div>
                   <div className="flex justify-between border-b border-gray-200/50 pb-1">
                     <span className="text-gray-400">Auth Account:</span>
-                    <span className="font-mono font-bold text-gray-700">{smtpStatus?.smtpUser || 'Not loaded'}</span>
+                    <span className="font-mono font-bold text-gray-700">{smtpStatus?.smtpUser || 'goldenpupshome22@gmail.com'}</span>
                   </div>
                 </div>
 
@@ -1806,6 +1827,21 @@ Golden Paws Director`
                     </span>
                   )}
                 </div>
+              </div>
+
+              {/* EMAIL NOTIFICATIONS TOGGLE */}
+              <div className="md:col-span-12 mt-2 pt-4 border-t border-gray-200/50 flex items-center justify-between">
+                <div>
+                  <h4 className="text-sm font-bold text-navy-950">Receive Email Notifications</h4>
+                  <p className="text-[10px] text-gray-500">Automatically forward all new adoption applications and contact inquiries to goldenpupshome22@gmail.com.</p>
+                </div>
+                <button
+                  onClick={toggleEmailNotifs}
+                  disabled={savingNotifs}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${emailNotifsEnabled ? 'bg-gold-500' : 'bg-gray-300'}`}
+                >
+                  <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${emailNotifsEnabled ? 'translate-x-6' : 'translate-x-1'}`} />
+                </button>
               </div>
 
               {/* INTERACTIVE DIAGNOSTIC TEST TRIGGER */}
@@ -1872,7 +1908,7 @@ Golden Paws Director`
                 <ol className="list-decimal list-inside space-y-4 text-xs text-gray-600 leading-relaxed">
                   <li>
                     <strong>Get a Google App Password</strong>:<br />
-                    Go to your Google Account Settings &rarr; Security &rarr; Enable 2-Step Verification &rarr; search for "App Passwords". Create one named <em className="font-serif">"Golden Paws Home"</em> and copy the generated 16-character code.
+                    Go to your Google Account (for <em>goldenpupshome22@gmail.com</em>) &rarr; Security &rarr; Enable 2-Step Verification &rarr; search for "App Passwords". Create one named <em className="font-serif">"Golden Paws Home"</em> and copy the generated 16-character code.
                   </li>
                   <li>
                     <strong>Define Variables in Settings</strong>:<br />
@@ -1880,14 +1916,15 @@ Golden Paws Director`
                     <ul className="list-disc list-inside pl-4 mt-2 space-y-1 text-gray-500 font-mono text-[10px]">
                       <li>SMTP_HOST = smtp.gmail.com</li>
                       <li>SMTP_PORT = 587</li>
-                      <li>SMTP_USER = your_gmail_address@gmail.com</li>
+                      <li>SMTP_USER = goldenpupshome22@gmail.com</li>
                       <li>SMTP_PASS = your_16_character_app_password</li>
-                      <li>SMTP_SENDER = your_gmail_address@gmail.com</li>
+                      <li>SMTP_SENDER = goldenpupshome22@gmail.com</li>
+                      <li>NOTIFICATION_EMAIL = goldenpupshome22@gmail.com</li>
                     </ul>
                   </li>
                   <li>
                     <strong>Save &amp; Auto-Recompile</strong>:<br />
-                    Click save. The system restarts the server automatically and configures your email dispatch.
+                    Click save. The system automatically configures your email dispatch.
                   </li>
                 </ol>
               </div>

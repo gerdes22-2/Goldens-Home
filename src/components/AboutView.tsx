@@ -84,7 +84,7 @@ export default function AboutView({ setTab }: AboutViewProps) {
         prcdPRA2: "Clear / Normal",
         ichthyosis: "Clear / Normal"
       },
-      image: "/src/assets/images/patriotic_goldens_bandana_1782303395345.jpg"
+      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWgaPeVYeT9FB11SnKgeFCOHEiHqZjTARPNLo4GSnEWw&s=10"
     },
     {
       id: "BELLA-145",
@@ -102,7 +102,25 @@ export default function AboutView({ setTab }: AboutViewProps) {
         prcdPRA2: "Carrier / Unaffected (Safe Pairing)",
         ichthyosis: "Clear / Normal"
       },
-      image: "/src/assets/images/breeder_two_fluffy_pups_1782303458269.jpg"
+      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdK7ddClHyzsLsb8nBUBTa7gitdyV7un8UveZIF6K65Q&s=10"
+    },
+    {
+      id: "STERLING-204",
+      name: "Sir Sterling of Sunny Hills",
+      role: "Stud / Sire (Father)",
+      breed: "English Cream Golden Retriever",
+      title: "UK Import Pedigree & Multi-Champion Grandsire",
+      ofaHips: "OFA Good (GR-140291G25M-VPI)",
+      ofaElbows: "OFA Normal (GR-EL6102M25-VPI)",
+      ofaEyes: "CAER Clear (June 2026 - GR-EYE16401)",
+      ofaHeart: "Cardiac Normal (GR-CA5012/M-VPI)",
+      genetics: {
+        prcdPRA: "Clear / Normal (Non-Carrier)",
+        prcdPRA1: "Clear / Normal",
+        prcdPRA2: "Clear / Normal",
+        ichthyosis: "Clear / Normal"
+      },
+      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRhYqIPh_lv__rFkV1mJlIXK_KTtqCHMAPRH8Nn1L2LFw&s"
     }
   ];
 
@@ -123,7 +141,7 @@ export default function AboutView({ setTab }: AboutViewProps) {
           className="space-y-4"
         >
           <span className="text-[10px] font-mono font-black text-gold-600 tracking-[0.4em] uppercase block">
-            THE SIGNATURE RANCH EXPERIENCE
+            ABOUT US
           </span>
           <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight leading-none text-navy-950">
             Designing a <span className="text-gold-500 italic font-serif font-medium">Bespoke</span> Life
@@ -197,6 +215,7 @@ export default function AboutView({ setTab }: AboutViewProps) {
                   <div className="relative">
                     <div className="absolute inset-0 bg-gold-500 rounded-full blur-md opacity-35"></div>
                     <EditableImage 
+                      imageId="founder-portrait"
                       src="/src/assets/images/ciara_breeder_portrait_1782303471681.jpg" 
                       className="w-20 h-20 rounded-2xl object-cover border-2 border-gold-500 relative" 
                       alt="Ciara Wallen - Breeding Director" 

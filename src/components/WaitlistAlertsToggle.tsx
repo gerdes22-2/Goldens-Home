@@ -81,7 +81,7 @@ export default function WaitlistAlertsToggle() {
     }
   };
 
-  // Triggers immediate simulated notification for premium social feedback
+  // Triggers immediate notification for premium social feedback
   const sendTestNotification = () => {
     const title = alertType === 'critical' ? '🚨 CRITICAL LITTER STAGE: M-LITTER' : '✨ GOLDEN VALVE MILESTONE FEED';
     const body = alertType === 'critical' 

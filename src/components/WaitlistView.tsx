@@ -202,6 +202,20 @@ export default function WaitlistView({ waitlist, searchQuery, setSearchQuery, se
         </div>
       </section>
 
+      {/* JOIN WAITLIST SECTION */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16 pb-12">
+        <div className="bg-navy-950 text-white rounded-[2.5rem] p-8 md:p-16 text-center">
+            <h2 className="text-3xl font-black mb-4">Join Our Master Waitlist</h2>
+            <p className="text-gray-400 mb-8 max-w-xl mx-auto">Ready to secure your spot for a future Golden Paws puppy? Submit your information to join our waitlist. A $350 commitment fee is required upon application approval to lock in your chronological priority.</p>
+            <button 
+                onClick={() => setTab('apply')}
+                className="bg-gold-500 text-navy-950 px-10 py-4 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-gold-400 transition-all shadow-xl shadow-gold-500/20"
+            >
+                Submit Application to Join Waitlist
+            </button>
+        </div>
+      </section>
+
       {/* GRAPHIC TREND CHART FOR SOCIAL PROOF */}
       <WaitlistGrowthChart />
 

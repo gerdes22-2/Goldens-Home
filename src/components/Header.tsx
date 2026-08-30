@@ -21,19 +21,19 @@ export default function Header({ currentTab, setTab }: HeaderProps) {
 
   const mainNav = [
     { id: 'home', label: 'Home' },
-    { id: 'about', label: 'Experience' },
-    { id: 'parents', label: 'Breeder Lines' },
+    { id: 'about', label: 'About Us' },
     { id: 'puppies', label: 'Available Puppies' },
+    { id: 'process', label: 'Adoption Process' },
+    { id: 'health', label: 'Health Audit' },
+    { id: 'waitlist', label: 'Master Waitlist' },
   ];
 
   const secondaryNav = [
-    { id: 'process', label: 'Process' },
-    { id: 'matcher', label: 'Match Tool' },
-    { id: 'health', label: 'Health Audit' },
     { id: 'journal', label: 'Journal' },
     { id: 'resources', label: 'Resources' },
     { id: 'faqs', label: 'FAQs' },
     { id: 'reviews', label: 'Reviews' },
+    { id: 'contact', label: 'Contact Us' },
   ];
 
   const handleNavClick = (tabId: string) => {

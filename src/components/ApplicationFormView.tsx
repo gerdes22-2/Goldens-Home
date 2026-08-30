@@ -7,6 +7,8 @@ import {
   Home, ShieldAlert, DollarSign, ListChecks, HeartHandshake, Edit3, Clock
 } from 'lucide-react';
 import { AdoptionApplication } from '../types';
+import { doc, setDoc } from 'firebase/firestore';
+import { db } from '../firebase';
 
 interface ApplicationFormViewProps {
   matchedPuppyName: string;
@@ -205,6 +207,15 @@ export default function ApplicationFormView({
 
     setIsSubmitting(true);
     try {
+      // 1. Save directly to Firestore collection
+      try {
+        await setDoc(doc(db, 'applications', appId), newApp);
+        console.log('Application saved to Firestore successfully:', appId);
+      } catch (firestoreErr) {
+        console.warn('Firestore write warning:', firestoreErr);
+      }
+
+      // 2. Dispatch email notification via server API
       const res = await fetch('/api/applications', {
         method: 'POST',
         headers: {

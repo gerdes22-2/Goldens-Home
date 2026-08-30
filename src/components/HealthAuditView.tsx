@@ -4,17 +4,21 @@ import {
   ShieldCheck, Heart, Eye, Activity, Dna, FileCheck, Award, 
   Microscope, Check, RefreshCw, ChevronRight, Search, FileText, BadgeAlert 
 } from 'lucide-react';
+import PuppyMatcherQuiz from './PuppyMatcherQuiz';
+import { Puppy } from '../types';
 
 interface HealthAuditViewProps {
   setTab?: (tab: string) => void;
+  puppies?: Puppy[];
+  setMatchedPuppyName?: (name: string) => void;
 }
 
-export default function HealthAuditView({ setTab }: HealthAuditViewProps) {
+export default function HealthAuditView({ setTab, puppies = [], setMatchedPuppyName = () => {} }: HealthAuditViewProps) {
   const [activeCheckIdx, setActiveCheckIdx] = useState<number>(0);
   const [verifyCode, setVerifyCode] = useState<string>('OFA-GR-RUSTY-129E');
   const [verificationResult, setVerificationResult] = useState<any | null>(null);
   const [isVerifying, setIsVerifying] = useState<boolean>(false);
-  const [simulatedScanProgress, setSimulatedScanProgress] = useState<number>(100);
+  const [scanProgress, setScanProgress] = useState<number>(100);
 
   const medicalChecks = [
     {
@@ -92,10 +96,10 @@ export default function HealthAuditView({ setTab }: HealthAuditViewProps) {
     if (!verifyCode.trim()) return;
 
     setIsVerifying(true);
-    setSimulatedScanProgress(0);
+    setScanProgress(0);
 
     const interval = setInterval(() => {
-      setSimulatedScanProgress(prev => {
+      setScanProgress(prev => {
         if (prev >= 100) {
           clearInterval(interval);
           return 100;
@@ -533,6 +537,12 @@ export default function HealthAuditView({ setTab }: HealthAuditViewProps) {
               </button>
             </div>
           </div>
+        )}
+      </div>
+
+      <div className="max-w-4xl mx-auto mt-16 px-4">
+        {setTab && (
+          <PuppyMatcherQuiz puppies={puppies} onMatch={setMatchedPuppyName} setTab={setTab} isSubpage={true} />
         )}
       </div>
 

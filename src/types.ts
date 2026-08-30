@@ -129,6 +129,6 @@ export interface GalleryImage {
   id: string;
   url: string;
   caption: string;
-  category: 'Litter' | 'Alumni' | 'Ranch Life';
+  category: 'Parents & Heritage' | 'Ranch Life' | 'Training & Care' | 'Alumni' | 'Litter' | string;
   aspectRatio: 'square' | 'video' | 'tall';
 }

@@ -4,6 +4,8 @@ import {
   HelpCircle, Send, CheckCircle, ShieldAlert, BadgeInfo 
 } from 'lucide-react';
 import { FAQS } from '../data';
+import { doc, setDoc } from 'firebase/firestore';
+import { db } from '../firebase';
 
 interface ContactViewProps {
   setTab?: (tab: string) => void;
@@ -27,13 +29,29 @@ export default function ContactView({ setTab }: ContactViewProps) {
     if (!formData.name || !formData.email || !formData.message) return;
     
     setIsSending(true);
+    const msgId = `msg-${Date.now()}`;
+    const payload = {
+      id: msgId,
+      ...formData,
+      timestamp: new Date().toISOString()
+    };
+
     try {
+      // 1. Direct save to Firestore
+      try {
+        await setDoc(doc(db, 'messages', msgId), payload);
+        console.log('Contact message saved to Firestore successfully:', msgId);
+      } catch (firestoreErr) {
+        console.warn('Firestore message save warning:', firestoreErr);
+      }
+
+      // 2. Dispatch email notification via server API
       const response = await fetch('/api/messages', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
       
       if (response.ok) {

@@ -13,7 +13,7 @@ export default function GalleryView({ setTab }: GalleryViewProps) {
   const [filter, setFilter] = useState<string>('all');
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
 
-  const categories = ['all', 'Litter', 'Alumni', 'Ranch Life'];
+  const categories = ['all', 'Parents & Heritage', 'Ranch Life', 'Training & Care', 'Alumni'];
   
   const filteredImages = filter === 'all' 
     ? GALLERY_IMAGES 
@@ -92,7 +92,7 @@ export default function GalleryView({ setTab }: GalleryViewProps) {
               onClick={() => setSelectedImage(img)}
             >
               <EditableImage 
-                imageId={img.url}
+                imageId={img.id}
                 src={img.url} 
                 alt={img.caption} 
                 className="w-full h-auto object-cover transition-transform duration-1000 group-hover:scale-110"

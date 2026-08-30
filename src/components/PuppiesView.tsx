@@ -7,6 +7,8 @@ import {
 import { Puppy } from '../types';
 import PuppyImageCarousel from './PuppyImageCarousel';
 import HealthCertificateModal from './HealthCertificateModal';
+import ParentsView from './ParentsView';
+import { EditableImage } from './ImageEditContext';
 
 const PUPPY_GROWTH_PHOTOS: Record<string, { age: string, url: string }[]> = {
   'Waffles': [
@@ -313,10 +315,10 @@ export default function PuppiesView({
                     {/* Upper Visual Cover */}
                     <div className="relative aspect-[4/3] overflow-hidden bg-gold-50/10">
                       {/* We use standard image wrapper to easily display selected growth weekly picture */}
-                      <img 
+                      <EditableImage 
+                        imageId={`puppy-growth-${pup.id}`}
                         src={displayedPhotoUrl} 
                         alt={pup.name} 
-                        referrerPolicy="no-referrer"
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" 
                       />
 
@@ -450,7 +452,7 @@ export default function PuppiesView({
                 </p>
               </div>
               <button
-                onClick={() => { setColorFilter('all'); setGenderFilter('all'); setStatusFilter('all'); }}
+                onClick={() => { setColorFilter('all'); setGenderFilter('all'); setStatusFilter('status'); }}
                 className="px-6 py-2.5 bg-gold-500 text-navy-950 font-black text-[10px] uppercase tracking-widest rounded-xl hover:scale-102 active:scale-98 transition-all"
               >
                 Clear Search Parameters
@@ -490,11 +492,11 @@ export default function PuppiesView({
                 {/* Left Side: Visual Showcase */}
                 <div className="md:w-5/12 relative bg-gold-50/10 flex flex-col justify-between min-h-[300px] md:min-h-0">
                   <div className="absolute inset-0">
-                    <img 
+                    <EditableImage 
+                      imageId={`puppy-modal-${selectedPuppy.id}`}
                       src={selectedPuppy.image} 
                       alt={selectedPuppy.name} 
                       className="w-full h-full object-cover" 
-                      referrerPolicy="no-referrer"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#09152b] via-navy-950/30 to-transparent"></div>
                   </div>
@@ -634,6 +636,8 @@ export default function PuppiesView({
           />
         )}
       </AnimatePresence>
+
+      <ParentsView setTab={setTab} isSubpage={true} />
 
     </div>
   );

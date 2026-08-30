@@ -8,9 +8,10 @@ interface PuppyMatcherQuizProps {
   puppies: Puppy[];
   onMatch: (puppyName: string) => void;
   setTab: (tab: string) => void;
+  isSubpage?: boolean;
 }
 
-export default function PuppyMatcherQuiz({ puppies, onMatch, setTab }: PuppyMatcherQuizProps) {
+export default function PuppyMatcherQuiz({ puppies, onMatch, setTab, isSubpage = false }: PuppyMatcherQuizProps) {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [result, setResult] = useState<Puppy | null>(null);
@@ -93,7 +94,7 @@ export default function PuppyMatcherQuiz({ puppies, onMatch, setTab }: PuppyMatc
   };
 
   return (
-    <div className="bg-white rounded-3xl border border-gray-150 shadow-xl overflow-hidden text-left">
+    <div className={`bg-white rounded-3xl border border-gray-150 shadow-xl overflow-hidden text-left ${isSubpage ? 'my-12' : ''}`}>
       <div className="bg-[#0d2244] p-6 text-white border-b border-yellow-500/20">
         <div className="flex items-center space-x-2">
           <Sparkles className="w-5 h-5 text-yellow-500" />

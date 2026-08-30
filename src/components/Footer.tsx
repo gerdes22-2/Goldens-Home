@@ -122,10 +122,10 @@ export default function Footer({ setTab }: FooterProps) {
           <div className="md:col-span-4 lg:col-span-2">
             <h3 className="text-white text-xs font-black tracking-widest uppercase mb-6">Program</h3>
             <ul className="space-y-4 text-xs font-medium">
-              <li><button onClick={() => handleLinkClick('parents')} className="hover:text-gold-500 transition-colors">Our Parents</button></li>
+              <li><button onClick={() => handleLinkClick('about')} className="hover:text-gold-500 transition-colors">About Us</button></li>
               <li><button onClick={() => handleLinkClick('puppies')} className="hover:text-gold-500 transition-colors">Available Puppies</button></li>
               <li><button onClick={() => handleLinkClick('process')} className="hover:text-gold-500 transition-colors">Adoption Process</button></li>
-              <li><button onClick={() => handleLinkClick('gallery')} className="hover:text-gold-500 transition-colors">Gallery</button></li>
+              <li><button onClick={() => handleLinkClick('health')} className="hover:text-gold-500 transition-colors">Health Audit</button></li>
               <li><button onClick={() => handleLinkClick('waitlist')} className="hover:text-gold-500 transition-colors">Master Waitlist</button></li>
             </ul>
           </div>

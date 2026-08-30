@@ -90,14 +90,20 @@ export default function LiveConsole({ setTab }: LiveConsoleProps) {
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        onClick={() => setIsOpen(true)}
+        onClick={() => setIsOpen(!isOpen)}
         className="fixed bottom-8 right-8 z-[60] p-4 bg-navy-950 text-white hover:text-gold-400 rounded-2xl shadow-2xl border-2 border-gold-500/40 hover:border-gold-500 flex items-center space-x-2 font-black text-xs uppercase tracking-widest transition-all"
       >
         <div className="relative">
-          <MessageSquare className="w-5 h-5 text-gold-500" />
-          <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-green-500 rounded-full border border-navy-950 animate-pulse"></span>
+          {isOpen ? (
+            <X className="w-5 h-5 text-gold-500" />
+          ) : (
+            <>
+              <MessageSquare className="w-5 h-5 text-gold-500" />
+              <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-green-500 rounded-full border border-navy-950 animate-pulse"></span>
+            </>
+          )}
         </div>
-        <span className="hidden md:inline">Consult Head Breeder</span>
+        <span className="hidden md:inline">{isOpen ? 'Close Chat' : 'Consult Head Breeder'}</span>
       </motion.button>
 
       {/* CHAT WINDOW */}
@@ -128,12 +134,6 @@ export default function LiveConsole({ setTab }: LiveConsoleProps) {
                   <p className="text-[9px] text-gold-500 font-mono font-bold uppercase tracking-widest mt-0.5">Head Breeder • Golden Paws</p>
                 </div>
               </div>
-              <button 
-                onClick={() => setIsOpen(false)} 
-                className="p-2 text-white/60 hover:text-white hover:bg-white/10 rounded-full transition-all"
-              >
-                <X className="w-5 h-5" />
-              </button>
             </div>
 
             {/* Messages */}

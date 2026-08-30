@@ -3,11 +3,14 @@ import {createRoot} from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
 import { ImageEditProvider } from './components/ImageEditContext.tsx';
+import { AdminAuthProvider } from './components/AdminAuthContext.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ImageEditProvider>
-      <App />
-    </ImageEditProvider>
+    <AdminAuthProvider>
+      <ImageEditProvider>
+        <App />
+      </ImageEditProvider>
+    </AdminAuthProvider>
   </StrictMode>,
 );

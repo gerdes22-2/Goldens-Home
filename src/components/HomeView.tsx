@@ -33,7 +33,7 @@ export default function HomeView({ puppies, setTab, setSelectedPuppy, setMatched
 
   const slides = [
     {
-      image: "/src/assets/images/ranch_pack_hero_banner_1782302897974.jpg",
+      image: "https://img77.uenicdn.com/image/upload/v1751916218/business/6e344da1-8157-413b-8f65-3ab350ddf993.jpg",
       eyebrow: "Sovereign Health Standards Since 1998",
       title: "Breeding Excellence",
       titleItalic: "With Devotion",
@@ -42,7 +42,7 @@ export default function HomeView({ puppies, setTab, setSelectedPuppy, setMatched
       secondaryCta: "Ranch Heritage"
     },
     {
-      image: "/images/sire_dam_parents_1782218119495.jpg",
+      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWgaPeVYeT9FB11SnKgeFCOHEiHqZjTARPNLo4GSnEWw&s=10",
       eyebrow: "OFA Good & Excellent Rated Parents",
       title: "Championship Genetics",
       titleItalic: "Pure Bloodlines",
@@ -51,7 +51,7 @@ export default function HomeView({ puppies, setTab, setSelectedPuppy, setMatched
       secondaryCta: "View Certifications"
     },
     {
-      image: "/images/patriotic_goldens_bandana_1782303395345.jpg",
+      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSP8BVGkmJcXofy_kqhSdf_N4A0u6dFN7tTXiwb5Ch5cg&s=10",
       eyebrow: "Early Neurological Socialization",
       title: "Molded For Character",
       titleItalic: "Gentle Spirits",
@@ -114,40 +114,40 @@ export default function HomeView({ puppies, setTab, setSelectedPuppy, setMatched
     {
       id: 1,
       category: 'social',
-      image: "/src/assets/images/puppies_breeder_lap_1782218082781.jpg",
+      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTxgYv_xAXM-OX64GhGacyr1qnEekffPlIQbaUjsFueQ&s",
       tag: "Hand-Raised",
       title: "Physical Socialization",
-      description: "Ciara holding our F-Litter puppy sisters on her lap during daily sensory yard play. Absolute human-focused confidence building.",
+      description: "Daily open pasture play and sensory yard activities fostering balanced, joyful dispositions.",
       badge: "RANCH DIRECT",
       badgeColor: "bg-gold-50 text-gold-700 border-gold-100"
     },
     {
       id: 2,
       category: 'vet',
-      image: "/src/assets/images/three_puppies_table_1782218102698.jpg",
+      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRN5u5Ai_ZmnIcjCl1CNd79Qr3wsbylZDvWC_9KWyBYjQ&s",
       tag: "Vet Clinic Pass",
       title: "Structured Diagnostics",
-      description: "Three golden retriever puppies waiting patiently side-by-side on our dark wooden clinical table for their week-7 physical clearances.",
+      description: "Rigorous veterinarian physical evaluations, cardiac checks, and certified OFA standards.",
       badge: "OFA ALIGNED",
       badgeColor: "bg-green-50 text-green-700 border-green-100"
     },
     {
       id: 3,
       category: 'social',
-      image: "/src/assets/images/sire_dam_parents_1782218119495.jpg",
+      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdK7ddClHyzsLsb8nBUBTa7gitdyV7un8UveZIF6K65Q&s=10",
       tag: "Certified Blood",
       title: "Heritage Lineage",
-      description: "Our premier athletic Sire and loving honey Dam standing together proudly under our stone archway during active field runs.",
+      description: "Our foundation parents embody generations of gentle temperament and award-winning conformation.",
       badge: "AKC CHAMPION",
       badgeColor: "bg-purple-50 text-purple-700 border-purple-100"
     },
     {
       id: 4,
       category: 'training',
-      image: "/src/assets/images/puppy_red_harness_1782218136476.jpg",
+      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQBtlSDqNbCfRArbnRLpybDcIH68MrxEOBWWTJwYmwP-g&s=10",
       tag: "ENS Trained",
       title: "Active Outdoor Drills",
-      description: "One of our adorable Golden Paws boys wearing his custom red harness for leash-training and obstacle confidence milestones.",
+      description: "Early recall foundation, obstacle confidence, and structured learning in our ranch gardens.",
       badge: "MICROCHIPPED",
       badgeColor: "bg-blue-50 text-blue-700 border-blue-100"
     }
@@ -750,11 +750,11 @@ export default function HomeView({ puppies, setTab, setSelectedPuppy, setMatched
           
           <div className="relative group">
             <div className="absolute inset-0 bg-gold-500/10 rounded-3xl -rotate-2 group-hover:rotate-0 transition-transform duration-500"></div>
-            <img 
+            <EditableImage 
+              imageId="breeder-philosophy-parents"
               src="/images/sire_dam_parents_1782218119495.jpg" 
               alt="Golden Retriever parents standing proudly together" 
               className="relative w-full h-[400px] object-cover rounded-3xl shadow-sm border border-gray-150"
-              referrerPolicy="no-referrer"
             />
           </div>
 

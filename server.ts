@@ -6,6 +6,17 @@ import nodemailer from "nodemailer";
 import crypto from "crypto";
 import { GoogleGenAI } from "@google/genai";
 import { generateAdopterConfirmationHtml, generateWaitlistNotificationHtml } from "./src/utils/emailTemplates";
+import { initializeApp } from "firebase/app";
+import { getFirestore, collection, doc, setDoc, getDoc, getDocs, updateDoc } from "firebase/firestore";
+
+let db: any;
+try {
+  const firebaseConfig = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'firebase-applet-config.json'), 'utf8'));
+  const firebaseApp = initializeApp(firebaseConfig);
+  db = getFirestore(firebaseApp, firebaseConfig.firestoreDatabaseId);
+} catch (e) {
+  console.error("Failed to initialize Firebase:", e);
+}
 
 async function startServer() {
   const app = express();
@@ -22,45 +33,14 @@ async function startServer() {
   app.use('/favicon.ico', express.static(path.join(process.cwd(), 'public', 'favicon.ico')));
   app.use('/logo.jpg', express.static(path.join(process.cwd(), 'public', 'logo.jpg')));
 
-  // Filesystem Database Paths
-  const dbDir = path.join(process.cwd(), "src", "db_data");
-  if (!fs.existsSync(dbDir)) {
-    fs.mkdirSync(dbDir, { recursive: true });
-  }
-
-  const appsFilePath = path.join(dbDir, "applications.json");
-  const msgsFilePath = path.join(dbDir, "messages.json");
-
-  // Helper to read database
-  const readDbFile = (filePath: string): any[] => {
-    if (fs.existsSync(filePath)) {
-      try {
-        const data = fs.readFileSync(filePath, "utf8");
-        return JSON.parse(data);
-      } catch (e) {
-        console.error("Error reading db file:", filePath, e);
-        return [];
-      }
-    }
-    return [];
-  };
-
-  // Helper to write database
-  const writeDbFile = (filePath: string, data: any[]) => {
-    try {
-      fs.writeFileSync(filePath, JSON.stringify(data, null, 2), "utf8");
-    } catch (e) {
-      console.error("Error writing db file:", filePath, e);
-    }
-  };
-
   // Helper function to send email notification (fails gracefully if credentials not provided)
   const sendEmailNotification = async (subject: string, htmlContent: string, toEmail?: string) => {
     const smtpHost = process.env.SMTP_HOST || "smtp.gmail.com";
     const smtpPort = parseInt(process.env.SMTP_PORT || "587");
-    const smtpUser = process.env.SMTP_USER;
+    const smtpUser = process.env.SMTP_USER || "goldenpupshome22@gmail.com";
     const smtpPass = process.env.SMTP_PASS;
-    const targetEmail = toEmail || "goldenpupshome22@gmail.com";
+    const defaultRecipient = process.env.NOTIFICATION_EMAIL || process.env.SMTP_RECEIVER || "goldenpupshome22@gmail.com";
+    const targetEmail = toEmail || defaultRecipient;
 
     if (!smtpUser || !smtpPass) {
       console.log("------------------------------------------------------------------------");
@@ -102,12 +82,12 @@ async function startServer() {
   };
 
   // API: Get custom images
-  app.get("/api/custom-images", (req, res) => {
+  app.get("/api/custom-images", async (req, res) => {
     try {
-      const filePath = path.join(process.cwd(), "src", "custom_images.json");
-      if (fs.existsSync(filePath)) {
-        const data = fs.readFileSync(filePath, "utf8");
-        return res.json(JSON.parse(data));
+      const docRef = doc(db, 'settings', 'custom_images');
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        return res.json(docSnap.data());
       }
       return res.json({});
     } catch (error) {
@@ -116,11 +96,10 @@ async function startServer() {
     }
   });
 
-  app.post("/api/custom-images", (req, res) => {
+  app.post("/api/custom-images", async (req, res) => {
     try {
-      const filePath = path.join(process.cwd(), "src", "custom_images.json");
-      fs.writeFileSync(filePath, JSON.stringify(req.body, null, 2), "utf8");
-      console.log("Successfully saved updated custom images to filesystem!");
+      await setDoc(doc(db, 'settings', 'custom_images'), req.body);
+      console.log("Successfully saved updated custom images to Firebase!");
       return res.json({ success: true });
     } catch (error) {
       console.error("Failed to save custom images:", error);
@@ -209,21 +188,29 @@ async function startServer() {
   app.post("/api/applications", async (req, res) => {
     try {
       const appData = req.body;
-      const currentApps = readDbFile(appsFilePath);
       
-      // Check if already exists, else append
-      const exists = currentApps.some(a => a.id === appData.id);
-      if (!exists) {
-        currentApps.push(appData);
-        writeDbFile(appsFilePath, currentApps);
+      const docRef = doc(db, 'applications', appData.id);
+      await setDoc(docRef, appData);
+
+      // Check if admin notifications are enabled
+      let notificationsEnabled = true;
+      try {
+        const notifSnap = await getDoc(doc(db, 'settings', 'notifications'));
+        if (notifSnap.exists()) {
+          notificationsEnabled = notifSnap.data().enabled !== false;
+        }
+      } catch (e) {
+        console.error("Failed to read notification settings:", e);
       }
 
       // Generate highly polished, branded gold-and-navy email document using our utility template
       const emailHtml = generateAdopterConfirmationHtml(appData);
 
       // Send confirmation to breeder
-      const breederSubject = `🐾 NEW Puppy Application Received: ${appData.fullName}`;
-      await sendEmailNotification(breederSubject, emailHtml);
+      if (notificationsEnabled) {
+        const breederSubject = `🐾 NEW Puppy Application Received: ${appData.fullName}`;
+        await sendEmailNotification(breederSubject, emailHtml);
+      }
 
       // Send personalized branded document directly to the adopter
       const adopterSubject = `🐾 Application Received - Golden Paws Home`;
@@ -240,14 +227,13 @@ async function startServer() {
   app.post("/api/messages", async (req, res) => {
     try {
       const msgData = req.body;
-      const currentMsgs = readDbFile(msgsFilePath);
+      const msgId = `msg-${Date.now()}`;
       
-      currentMsgs.push({
-        id: `msg-${Date.now()}`,
+      await setDoc(doc(db, 'messages', msgId), {
+        id: msgId,
         submittedAt: new Date().toISOString(),
         ...msgData
       });
-      writeDbFile(msgsFilePath, currentMsgs);
 
       // Prepare email body
       const subject = `✉️ NEW Contact Inquiry: ${msgData.name}`;
@@ -269,46 +255,32 @@ async function startServer() {
         </div>
       `;
 
-      const emailResult = await sendEmailNotification(subject, emailHtml);
+      // Check if admin notifications are enabled
+      let notificationsEnabled = true;
+      try {
+        const notifSnap = await getDoc(doc(db, 'settings', 'notifications'));
+        if (notifSnap.exists()) {
+          notificationsEnabled = notifSnap.data().enabled !== false;
+        }
+      } catch (e) {
+        console.error("Failed to read notification settings:", e);
+      }
 
-      return res.json({ success: true, emailSent: emailResult.success });
+      if (notificationsEnabled) {
+        const emailResult = await sendEmailNotification(subject, emailHtml);
+        return res.json({ success: true, emailSent: emailResult.success });
+      } else {
+        return res.json({ success: true, emailSent: false, reason: "Admin notifications disabled" });
+      }
     } catch (error: any) {
       console.error("Failed to save contact message:", error);
       return res.status(500).json({ error: "Failed to save contact message", details: error.message });
     }
   });
 
-  // API: Get all submissions (Admin dashboard retrieve)
-  app.get("/api/submissions", (req, res) => {
-    try {
-      const apps = readDbFile(appsFilePath);
-      const msgs = readDbFile(msgsFilePath);
-      return res.json({ applications: apps, messages: msgs });
-    } catch (error) {
-      console.error("Failed to read submissions:", error);
-      return res.status(500).json({ error: "Failed to retrieve submissions" });
-    }
-  });
-
-  // API: Update application status
-  app.patch("/api/applications/:id", (req, res) => {
-    try {
-      const appId = req.params.id;
-      const { status } = req.body;
-      const apps = readDbFile(appsFilePath);
-      const appIndex = apps.findIndex(a => a.id === appId);
-      
-      if (appIndex !== -1) {
-        apps[appIndex].status = status;
-        writeDbFile(appsFilePath, apps);
-        return res.json({ success: true, app: apps[appIndex] });
-      }
-      return res.status(404).json({ error: "Application not found" });
-    } catch (error) {
-      console.error("Failed to update application:", error);
-      return res.status(500).json({ error: "Failed to update application" });
-    }
-  });
+  // APIs that were replaced by client-side direct Firestore queries:
+  // - GET /api/submissions
+  // - PATCH /api/applications/:id
 
   // API: Get SMTP configuration status for Breeder dashboard
   app.get("/api/smtp-status", (req, res) => {
@@ -331,12 +303,13 @@ async function startServer() {
         }
       }
 
+      const targetEmail = process.env.NOTIFICATION_EMAIL || process.env.SMTP_RECEIVER || "goldenpupshome22@gmail.com";
       return res.json({
         configured: isConfigured,
         smtpHost,
         smtpPort,
-        smtpUser: maskedUser || "Not set",
-        targetEmail: "goldenpupshome22@gmail.com"
+        smtpUser: maskedUser || (process.env.SMTP_USER ? process.env.SMTP_USER : "goldenpupshome22@gmail.com"),
+        targetEmail: targetEmail
       });
     } catch (error: any) {
       return res.status(500).json({ error: "Failed to retrieve SMTP status", details: error.message });
@@ -353,7 +326,8 @@ async function startServer() {
       }
 
       // Read real submissions
-      const apps = readDbFile(appsFilePath);
+      const appsSnap = await getDocs(collection(db, 'applications'));
+      const apps = appsSnap.docs.map(d => d.data());
 
       // Define default waitlist families to simulate/ensure content
       const defaultWaitlistFamilies = [
@@ -422,7 +396,7 @@ async function startServer() {
       }
 
       // Determine if live SMTP is active to report correctly
-      const smtpUser = process.env.SMTP_USER;
+      const smtpUser = process.env.SMTP_USER || "goldenpupshome22@gmail.com";
       const smtpPass = process.env.SMTP_PASS;
       const isLiveActive = !!(smtpUser && smtpPass);
 
@@ -442,6 +416,7 @@ async function startServer() {
   // API: Send immediate verification test email alert to breeder
   app.post("/api/send-test-email", async (req, res) => {
     try {
+      const targetNotificationEmail = req.body?.targetEmail || process.env.NOTIFICATION_EMAIL || process.env.SMTP_RECEIVER || "goldenpupshome22@gmail.com";
       const subject = "🐾 LIVE TEST: Breeder Alert Notification System Active!";
       const testHtml = `
         <div style="font-family: sans-serif; max-width: 600px; padding: 30px; border: 3px solid #d4af37; border-radius: 16px; background-color: #0d2244; color: #ffffff; text-align: center;">
@@ -454,205 +429,22 @@ async function startServer() {
             <span style="color: #d4af37; font-weight: bold;">System Verification Parameters:</span><br>
             • SMTP Server Host: ${process.env.SMTP_HOST || "smtp.gmail.com"}<br>
             • Port Configuration: ${process.env.SMTP_PORT || "587"}<br>
-            • Dispatch Account: ${process.env.SMTP_USER || "Not specified"}<br>
-            • Target Administrator: goldenpupshome22@gmail.com
+            • Dispatch Account: ${process.env.SMTP_USER || "goldenpupshome22@gmail.com"}<br>
+            • Target Notification Inbox: ${targetNotificationEmail}
           </div>
           <p style="font-size: 11px; color: #94a3b8; margin-top: 20px;">
-            This is an automated operational diagnostic message sent from your Cloud container console. No further action is required.
+            This is an automated operational diagnostic message sent from your Golden Paws server.
           </p>
         </div>
       `;
-      const emailResult = await sendEmailNotification(subject, testHtml, "goldenpupshome22@gmail.com");
-      return res.json({ success: emailResult.success, error: emailResult.error || null });
+      const emailResult = await sendEmailNotification(subject, testHtml, targetNotificationEmail);
+      return res.json({ success: emailResult.success, error: emailResult.error || null, targetEmail: targetNotificationEmail });
     } catch (error: any) {
       return res.status(500).json({ success: false, error: error.message });
     }
   });
 
   // API: Live Consultation chat backed by Gemini API
-  app.post("/api/chat", async (req, res) => {
-    try {
-      const { messages } = req.body;
-      if (!messages || !Array.isArray(messages) || messages.length === 0) {
-        return res.status(400).json({ error: "Messages array is required" });
-      }
-
-      const lastUserMessage = [...messages].reverse().find(m => m.role === 'user')?.text || "";
-
-      // Smart organic fallback function if APIs are offline or keys are missing
-      const getFallbackResponse = (userInput: string): string => {
-        const query = userInput.toLowerCase();
-        
-        // Price / Cost
-        if (query.includes("price") || query.includes("cost") || query.includes("how much") || query.includes("deposit") || query.includes("fee") || query.includes("pricing") || query.includes("pay")) {
-          const variations = [
-            "Our companion puppies are priced at $850. This covers their complete AKC registration, official veterinary evaluations, microchipping, and our 1-year genetic guarantee. To join the waitlist, a $200 holding fee secures your spot and counts directly toward the final balance.",
-            "Every puppy here is $850, which includes their microchip, veterinary health clearances, AKC papers, and our structural health guarantee. If you decide to join us, a $200 holding deposit secures your position in line.",
-            "Our standard price is $850 for a companion puppy. That includes a veterinary certificate of health, microchipping, AKC registration, and lifetime breeder support. We require a $200 deposit to hold your spot on the waitlist."
-          ];
-          return variations[Math.floor(Math.random() * variations.length)];
-        }
-        
-        // Delivery / Shipping
-        if (query.includes("delivery") || query.includes("ship") || query.includes("transport") || query.includes("flight") || query.includes("travel") || query.includes("send") || query.includes("fly")) {
-          return "We handle travel very safely! We coordinate professional flight nannies who keep the puppy right with them in the airplane cabin for hand-to-hand delivery at your nearest major airport. We can also set up certified ground couriers or meet you locally if you prefer.";
-        }
-
-        // Location / Directions / Visiting
-        if (query.includes("where") || query.includes("location") || query.includes("ranch") || query.includes("address") || query.includes("state") || query.includes("visit") || query.includes("directions") || query.includes("map")) {
-          return "Our family's private 150-acre ranch is located in the valley, USA. For the health and security of our nursing mothers and vulnerable newborn litters, we keep the ranch private and only schedule personal visits by appointment for approved waitlist families.";
-        }
-
-        // Parent dogs
-        if (query.includes("parent") || query.includes("sire") || query.includes("dam") || query.includes("rusty") || query.includes("bella") || query.includes("sterling") || query.includes("father") || query.includes("mother")) {
-          return "Our parents are the absolute heart of our home. GCH Rusty is our athletic Red Golden Grand Champion, Lady Bella is our sweet Honey Golden certified therapy mother, and Sir Sterling is our gorgeous cream-colored import with deep European champion lines. All are fully OFA health-certified.";
-        }
-
-        // Health clearances
-        if (query.includes("health") || query.includes("ofa") || query.includes("clearance") || query.includes("test") || query.includes("hip") || query.includes("elbow") || query.includes("genetic") || query.includes("cardiac") || query.includes("guarantee") || query.includes("disease")) {
-          return "Health screening is our top priority. Our parent lines hold official OFA joint certifications (Excellent and Good ratings), clear cardiac evaluations, and yearly CAER eye clearances. Our puppies are also guaranteed genetically clear of PRA and Ichthyosis by parentage.";
-        }
-
-        // Specific puppy info
-        if (query.includes("puppy") || query.includes("puppies") || query.includes("available") || query.includes("pink") || query.includes("blue") || query.includes("yellow") || query.includes("green") || query.includes("red") || query.includes("white") || query.includes("black")) {
-          return "Our current available puppies were born on May 13, 2026. We have Pink Girl (a very calm cuddle-bug), Blue Boy (our bold, smart retriever), Yellow Girl (extremely attentive and gentle), Green Boy (a stocky, laid-back cream-colored gentleman), Red Girl (active, athletic explorer), White Boy (sweet and quiet), and Black Boy (inquisitive learner). Each is evaluated using Volhard aptitude matching.";
-        }
-
-        // Process / Application
-        if (query.includes("apply") || query.includes("adoption") || query.includes("process") || query.includes("reserve") || query.includes("waitlist") || query.includes("how to adopt") || query.includes("buy")) {
-          return "Our adoption process is simple: you start by filling out our online application with a bit about your lifestyle. Once I review it, we schedule a quick phone chat to get to know each other and answer your questions. After approval, a $200 deposit holds your spot.";
-        }
-
-        // Advice / Training / Nutrition
-        if (query.includes("advice") || query.includes("train") || query.includes("food") || query.includes("feed") || query.includes("eat") || query.includes("nutrition") || query.includes("care") || query.includes("exercise") || query.includes("socialize")) {
-          return "For large-breed puppies, it is best to support slow, steady joint development. I highly recommend feeding a premium large-breed puppy formula and keeping playtime low-impact. Early, gentle socialization with safe surfaces, sounds, and kids is what makes our Goldens so exceptionally confident.";
-        }
-
-        // Greetings
-        if (query.includes("hello") || query.includes("hi ") || query.includes("hey") || query.includes("greetings") || query.includes("who are you") || query.includes("katrina")) {
-          return "Hey there! I am Katrina Mahra, the head breeder at Golden Paws Home. I'm currently on our private ranch spending time with our Goldens. I am happy to chat and share details about our beautiful puppies and parent dogs.";
-        }
-
-        // Default natural response
-        return "At Golden Paws Home, we focus purely on heritage-line, health-certified Golden Retrievers with exceptional, calm temperaments. Let me know what specific questions you have about our puppies, parent lineages, or our ranch breeding program.";
-      };
-
-      const SYSTEM_INSTRUCTION = `You are Katrina Mahra, the head breeder at Golden Paws Home, a world-class certified heritage breeder of Golden Retrievers on our family's private 150-acre ranch.
-You have 15+ years of experience in champion-line, OFA health-certified Golden Retriever breeding.
-Maintain a highly warm, professional, deeply caring, and organic human tone. You love your dogs like family.
-
-Our Parents:
-- GCH Rusty of Golden Paws (Sire, OFA Excellent, Red Golden, athletic field champ)
-- Lady Bella of Amber Acres (Dam, OFA Good, Honey Golden, therapy-dog certified, sweet maternal instinct)
-- Sir Sterling of Sunny Hills (Sire, OFA Good, Cream English Cream, stoic import lineage)
-
-Our Available Puppies (Litter born 2026-05-13, price $850, fully AKC registered, microchipped, 1-yr guarantee):
-- Pink Girl (Female, Honey Golden, 12.4 lbs, calm cuddle-bug, amazing with kids)
-- Blue Boy (Male, Cream, 13.1 lbs, bold retriever explorer, high intelligence)
-- Yellow Girl (Female, Honey Golden, 12.8 lbs, confidence and soft-spoken elegance)
-- Green Boy (Male, Cream, 13.3 lbs, stocky, calm temperament, great with cats)
-- Red Girl (Female, Red Golden, 12.5 lbs, high-stamina firecracker hiking buddy)
-- White Boy (Male, Cream, 13.0 lbs, very sweet, laid-back, gentle nap lover)
-- Black Boy (Male, Honey Golden, 12.9 lbs, inquisitive and curious active learner)
-
-Our Adoption Process:
-1. Submit application form with preferences, background, and lifestyle.
-2. Breeder review & phone consult (Katrina schedules a 15-minute friendly chat).
-3. Approved waitlist placement ($200 holding fee, which applies directly to the final $850 balance).
-4. Selection & Matching at 6 weeks old (based on Volhard puppy aptitude evaluations).
-5. Homecoming at 8 weeks old with health dossier, transitional puppy pack, and lifetime breeder support.
-
-CRITICAL VOICE MANDATE (MUST OBEY):
-- SOUND LIKE A REAL HUMAN. Write like an experienced, warm person texting or sending an organic email.
-- NEVER end your messages with artificial, boilerplate AI questions (e.g., "Is there anything else I can help you with?", "Would you like to start your application?", "Do you have any other questions about our parents?"). This immediately breaks the immersion. Instead, make your statements complete, friendly, and let the conversation flow naturally.
-- Keep responses concise (usually 2 to 4 sentences or short paragraphs). Do not use lists or bullet points unless explicitly requested. Avoid markdown styling besides occasionally bolding a key name if appropriate.`;
-
-      // 1. Try Gemini API if key is available
-      const apiKey = process.env.GEMINI_API_KEY;
-      if (apiKey) {
-        try {
-          const ai = new GoogleGenAI({
-            apiKey: apiKey,
-            httpOptions: {
-              headers: {
-                'User-Agent': 'aistudio-build',
-              }
-            }
-          });
-
-          const contents = messages.map((m: any) => ({
-            role: m.role === 'user' ? 'user' : 'model',
-            parts: [{ text: m.text }]
-          }));
-
-          const response = await ai.models.generateContent({
-            model: "gemini-3.6-flash",
-            contents: contents,
-            config: {
-              systemInstruction: SYSTEM_INSTRUCTION,
-              temperature: 0.7,
-            }
-          });
-
-          if (response && response.text) {
-            return res.json({ response: response.text.trim(), source: "gemini" });
-          }
-        } catch (geminiError) {
-          console.error("Gemini Live Consultation API error, checking secondary fallbacks:", geminiError);
-        }
-      }
-
-      // 2. Try Hugging Face API fallback if configured
-      const hfKey = process.env.HUGGING_FACE_API_KEY;
-      if (hfKey) {
-        try {
-          const formattedMessages = messages.map((m: any) => ({
-            role: m.role === 'user' ? 'user' : 'assistant',
-            content: m.text
-          }));
-
-          const hfResponse = await fetch("https://api-inference.huggingface.co/models/meta-llama/Meta-Llama-3-8B-Instruct/v1/chat/completions", {
-            method: "POST",
-            headers: {
-              "Authorization": `Bearer ${hfKey}`,
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-              model: "meta-llama/Meta-Llama-3-8B-Instruct",
-              messages: [
-                { role: "system", content: SYSTEM_INSTRUCTION },
-                ...formattedMessages
-              ],
-              max_tokens: 250,
-              temperature: 0.7
-            })
-          });
-
-          if (hfResponse.ok) {
-            const hfData = await hfResponse.json();
-            const text = hfData.choices?.[0]?.message?.content;
-            if (text) {
-              return res.json({ response: text.trim(), source: "huggingface" });
-            }
-          } else {
-            console.warn(`Hugging Face API returned non-OK status: ${hfResponse.status}`);
-          }
-        } catch (hfError) {
-          console.error("Hugging Face API fallback error:", hfError);
-        }
-      }
-
-      // 3. Robust Local rule-based fallback (Guarantees elegant, human-like answers offline)
-      console.log("Using Katrina Mahra's custom rule-based fallback system.");
-      const fallback = getFallbackResponse(lastUserMessage);
-      return res.json({ response: fallback, source: "fallback" });
-
-    } catch (error: any) {
-      console.error("Critical error in /api/chat:", error);
-      const fallback = "I am so glad you reached out! It looks like our live console is experiencing high traffic, but I'm here. All our parent lines are thoroughly OFA evaluated and our puppies are priced at $850. Please feel free to fill out our adoption application or let me know what questions you have about our puppies!";
-      return res.json({ response: fallback, source: "error-fallback" });
-    }
-  });
 
   // Vite middleware for development or static file serving for production
   if (process.env.NODE_ENV !== "production") {

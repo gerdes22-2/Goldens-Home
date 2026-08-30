@@ -15,7 +15,6 @@ import ApplicationFormView from './components/ApplicationFormView';
 import WaitlistView from './components/WaitlistView';
 import ContactView from './components/ContactView';
 import ReviewsView from './components/ReviewsView';
-import LiveConsole from './components/LiveConsole';
 import PuppyMatcherQuiz from './components/PuppyMatcherQuiz';
 import HealthAuditView from './components/HealthAuditView';
 import JournalView from './components/JournalView';
@@ -81,7 +80,7 @@ export default function App() {
 
   // Callback to append user submitted application dynamically as a Waitlist Entry
   const handleAddApplication = (app: AdoptionApplication) => {
-    // 1. Create a simulated waitlist entry on hold for them
+    // 1. Create a waitlist entry on hold for them
     const newWaitEntry: WaitlistEntry = {
       id: `w-${Date.now()}`,
       name: app.fullName,
@@ -101,7 +100,7 @@ export default function App() {
       );
     }
 
-    // 3. Trigger simulated email confirmation dispatch to their email address
+    // 3. Trigger email confirmation dispatch to their email address
     setTimeout(() => {
       setEmailToast({
         email: app.email,
@@ -129,7 +128,6 @@ export default function App() {
 
       {/* RENDER DYNAMIC PAGES VIA TAB SWITCH WITH FADE ANIMATIONS */}
       <main className="flex-grow">
-        <LiveConsole setTab={setTab} />
         <motion.div
           key={currentTab}
           initial={{ opacity: 0, y: 10 }}
@@ -211,19 +209,13 @@ export default function App() {
             />
           )}
           
-          {currentTab === 'matcher' && (
-            <div className="pt-32 pb-20 max-w-2xl mx-auto px-4">
-              <PuppyMatcherQuiz 
-                puppies={puppies} 
-                onMatch={setMatchedPuppyName} 
-                setTab={setTab} 
-              />
-            </div>
-          )}
-
           {currentTab === 'health' && (
             <div className="pt-32 pb-32 max-w-5xl mx-auto px-4">
-              <HealthAuditView setTab={setTab} />
+              <HealthAuditView 
+                setTab={setTab}
+                puppies={puppies}
+                setMatchedPuppyName={setMatchedPuppyName}
+              />
             </div>
           )}
 

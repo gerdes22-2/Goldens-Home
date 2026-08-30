@@ -33,9 +33,10 @@ interface FamilyTree {
 
 interface ParentsViewProps {
   setTab?: (tab: string) => void;
+  isSubpage?: boolean;
 }
 
-export default function ParentsView({ setTab }: ParentsViewProps) {
+export default function ParentsView({ setTab, isSubpage = false }: ParentsViewProps) {
   const [selectedParentId, setSelectedParentId] = useState<string>('s1');
   const [activeGenderFilter, setActiveGenderFilter] = useState<'all' | 'Sire' | 'Dam'>('all');
   const [inspectedClearance, setInspectedClearance] = useState<{ parentId: string; key: string; value: string } | null>(null);
@@ -115,7 +116,7 @@ export default function ParentsView({ setTab }: ParentsViewProps) {
     : DEFAULT_PARENTS.filter(p => p.role === activeGenderFilter);
 
   return (
-    <div className="bg-[#fdfcfb] min-h-screen pt-28 pb-32 text-[#0d2244] text-left">
+    <div className={`bg-[#fdfcfb] text-[#0d2244] text-left ${isSubpage ? 'pt-16 pb-16 border-t border-gray-200' : 'min-h-screen pt-28 pb-32'}`}>
       
       {/* HEADER HERO */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-16">
@@ -196,7 +197,7 @@ export default function ParentsView({ setTab }: ParentsViewProps) {
               <div className="w-full lg:w-1/2 relative group flex flex-col justify-between">
                 <div className="relative aspect-[4/5] rounded-3xl overflow-hidden shadow-sm flex-grow">
                   <EditableImage 
-                    imageId={parent.image}
+                    imageId={`parent-image-${parent.id}`}
                     src={parent.image} 
                     alt={parent.name} 
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
@@ -392,7 +393,7 @@ export default function ParentsView({ setTab }: ParentsViewProps) {
 
                 {/* Documentation Dossier Hook */}
                 <div 
-                  onClick={() => alert(`Compiling ${parent.name}'s Health Folder. Including multi-generational pedigree certificates, orthopedic diagnostic scans, ophthalmological clearance cards, and DNA clear panels. Downloading verified PDF (simulated)...`)}
+                  onClick={() => alert(`Compiling ${parent.name}'s Health Folder. Including multi-generational pedigree certificates, orthopedic diagnostic scans, ophthalmological clearance cards, and DNA clear panels. Downloading verified PDF...`)}
                   className="group flex items-center p-4 bg-gold-50/30 border border-gold-100 rounded-2xl cursor-pointer hover:bg-gold-50 transition-all text-left"
                 >
                   <div className="p-2.5 bg-white rounded-xl shadow-sm mr-4 group-hover:scale-105 transition-transform border border-gold-100">

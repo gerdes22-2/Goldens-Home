@@ -5,6 +5,7 @@ import {
   MapPin, ShieldCheck, Mail, FileText, ChevronRight, PenTool, Printer, Sparkles, MoveRight, Check, FileCheck, Info, Sparkle
 } from 'lucide-react';
 import { DOCUMENTS } from '../data';
+import { EditableImage } from './ImageEditContext';
 
 interface ProcessViewProps {
   setTab?: (tab: string) => void;
@@ -57,7 +58,8 @@ export default function ProcessView({ setTab }: ProcessViewProps) {
       title: "Adoption \nApplication",
       desc: "Architect your household profile. We evaluate matching logic and family dynamics to ensure a symbiotic placement.",
       detailedInstructions: "In this phase, you submit our comprehensive family questionnaire. We look at household activity levels, pet experience, yard security, and schedule compatibility to match the right temperament.",
-      checklist: ["Submit detailed lifestyle questionnaire", "Review of answers by Ciara within 48 hours", "Initial compatibility rating assigned"]
+      checklist: ["Submit detailed lifestyle questionnaire", "Review of answers by Ciara within 48 hours", "Initial compatibility rating assigned"],
+      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs8rHhS0_e7yxIJFkUf-k7683q54zjPhXhpgzI7RF5-g&s=10"
     },
     {
       step: "02",
@@ -65,7 +67,8 @@ export default function ProcessView({ setTab }: ProcessViewProps) {
       title: "Selection \nSynthesis",
       desc: "A focused consultation to discuss genomic goals, planned litters, and early environment coordination.",
       detailedInstructions: "A 20-minute phone dialogue to discuss your aesthetic, size, and temperament preferences. We walk through upcoming sire/dam matching matrices to align with your seasonal timeline.",
-      checklist: ["Schedule focused 1-on-1 dialogue", "Confirm coat color & gender preference", "Coordinate puppy delivery options"]
+      checklist: ["Schedule focused 1-on-1 dialogue", "Confirm coat color & gender preference", "Coordinate puppy delivery options"],
+      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUSLgf8pK_Pecv5eDy4AP3w_jkp7fLGi52McuUmQZ-ww&s=10"
     },
     {
       step: "03",
@@ -73,7 +76,8 @@ export default function ProcessView({ setTab }: ProcessViewProps) {
       title: "Waitlist \nReservation",
       desc: "An approved reservation secures your standing in our master archives, prioritizing you for upcoming seasonal litters.",
       detailedInstructions: "Approved families lock in their waitlist rank order. Our dashboard displays real-time waitlist status, upcoming litter milestones, and exact gestation countdowns.",
-      checklist: ["Submit waitlist reservation fee", "Log account on digital parent tracker", "Establish communication alert triggers"]
+      checklist: ["Submit waitlist reservation fee", "Log account on digital parent tracker", "Establish communication alert triggers"],
+      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT9HmdGl_VCy9MpdHhRu6CGZZjrARbk0YRn4yw0OES8Gg&s=10"
     },
     {
       step: "04",
@@ -81,7 +85,8 @@ export default function ProcessView({ setTab }: ProcessViewProps) {
       title: "Puppy \nSelections",
       desc: "At 6 weeks, selections open in order of standing. Experience real-time behavioral streams and ranch visits.",
       detailedInstructions: "The magic moment! At 6 weeks of age, selections open sequentially based on waitlist position. We provide individual HD videos, behavioral test cards, and clinical health reports.",
-      checklist: ["View 6-week behavioral profiling stream", "Attend virtual or in-person selection meet", "Confirm permanent selection matching"]
+      checklist: ["View 6-week behavioral profiling stream", "Attend virtual or in-person selection meet", "Confirm permanent selection matching"],
+      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqrI5bUaiXQtIoMFeGaA-bHIfIqYuPAha8vecZKzV7cA&s=10"
     },
     {
       step: "05",
@@ -89,7 +94,8 @@ export default function ProcessView({ setTab }: ProcessViewProps) {
       title: "The Final \nTransition",
       desc: "At 8 weeks, puppies graduate from ranch life. We provide a comprehensive medical dossier and transition kit.",
       detailedInstructions: "Your graduate departs at 8-10 weeks with a signature transition pack. This includes a certified OFA veterinary dossier, microchip papers, starter food bag, and scent blanket.",
-      checklist: ["Clinical 25-step physical check-off", "Sign official purchase contracts", "Receive custom Golden Paws starter kit"]
+      checklist: ["Clinical 25-step physical check-off", "Sign official purchase contracts", "Receive custom Golden Paws starter kit"],
+      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTbtX00h5shPCA5pr_nyVy-EZCMcMMN4GiG60NNq2KLQA&s=10"
     }
   ];
 
@@ -194,13 +200,23 @@ export default function ProcessView({ setTab }: ProcessViewProps) {
                     <span className="text-sm font-mono font-black text-gray-300">STAGE {steps[activeStepIdx].step}/05</span>
                   </div>
 
-                  <div className="space-y-4">
-                    <h5 className="text-[10px] font-mono font-black text-gray-400 uppercase tracking-widest">
-                      Procedure Description &amp; Requirements:
-                    </h5>
-                    <p className="text-sm sm:text-base text-gray-500 leading-relaxed font-serif italic">
-                      {steps[activeStepIdx].detailedInstructions}
-                    </p>
+                  <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center bg-gold-50/20 p-5 rounded-2xl border border-gold-100/50">
+                    <div className="md:col-span-4 rounded-xl overflow-hidden shadow-sm aspect-video sm:aspect-square">
+                      <EditableImage 
+                        imageId={`step-preview-${steps[activeStepIdx].step}`}
+                        src={steps[activeStepIdx].image} 
+                        alt={steps[activeStepIdx].title} 
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="md:col-span-8 space-y-3">
+                      <h5 className="text-[10px] font-mono font-black text-gray-400 uppercase tracking-widest">
+                        Procedure Description &amp; Requirements:
+                      </h5>
+                      <p className="text-xs sm:text-sm text-gray-600 leading-relaxed font-serif italic">
+                        {steps[activeStepIdx].detailedInstructions}
+                      </p>
+                    </div>
                   </div>
 
                   {/* Checklist of this milestone */}
@@ -436,7 +452,7 @@ export default function ProcessView({ setTab }: ProcessViewProps) {
                   Legal &amp; Care <span className="text-gold-500">Repository</span>
                 </h2>
                 <p className="text-gray-400 text-sm leading-relaxed font-serif italic">
-                  We stand against ambiguity. Pre-audit our official adoption agreements, medical warranties, and clinical transition protocols. You can simulate signing these documents below.
+                  We stand against ambiguity. Pre-audit our official adoption agreements, medical warranties, and clinical transition protocols. You can formally execute these documents below.
                 </p>
               </div>
 

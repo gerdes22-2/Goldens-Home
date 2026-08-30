@@ -3,9 +3,10 @@ import { motion, AnimatePresence } from 'motion/react';
 import { 
   Star, Heart, ShieldCheck, MapPin, Search, PenTool, 
   Sparkles, Filter, CheckCircle, PlusCircle, ArrowRight,
-  Award, Activity, Info, X, ChevronRight, MessageSquare, Shield, Clipboard, Check
+  Award, Activity, Info, X, ChevronRight, MessageSquare, Shield, Clipboard, Check, Camera
 } from 'lucide-react';
 import { Review } from '../types';
+import { EditableImage } from './ImageEditContext';
 
 interface ReviewsViewProps {
   reviews: Review[];
@@ -545,6 +546,79 @@ export default function ReviewsView({ reviews, onAddReview, setTab }: ReviewsVie
           )}
         </AnimatePresence>
 
+        {/* ALUMNI SNAPSHOT GALLERY */}
+        <section className="mb-12">
+          <div className="bg-white border border-stone-200/80 rounded-[2.5rem] p-6 sm:p-8 shadow-sm text-left">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+              <div>
+                <span className="text-[10px] font-mono font-black text-gold-600 uppercase tracking-widest block">
+                  GRADUATE LIFE & ALUMNI
+                </span>
+                <h3 className="text-xl sm:text-2xl font-black text-navy-950">
+                  Golden Paws in Their Forever Homes
+                </h3>
+              </div>
+              {setTab && (
+                <button
+                  onClick={() => setTab('gallery')}
+                  className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-gold-600 hover:text-gold-700 uppercase tracking-wider"
+                >
+                  <Camera className="w-4 h-4" />
+                  <span>View Full Photo Archive →</span>
+                </button>
+              )}
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {[
+                {
+                  id: "alumni-showcase-1",
+                  src: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTbtX00h5shPCA5pr_nyVy-EZCMcMMN4GiG60NNq2KLQA&s=10",
+                  name: "Bella & River",
+                  location: "Aspen, CO",
+                  age: "2.5 Years"
+                },
+                {
+                  id: "alumni-showcase-2",
+                  src: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTxgYv_xAXM-OX64GhGacyr1qnEekffPlIQbaUjsFueQ&s",
+                  name: "Leo & Family",
+                  location: "Seattle, WA",
+                  age: "1.5 Years"
+                },
+                {
+                  id: "alumni-showcase-3",
+                  src: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSP8BVGkmJcXofy_kqhSdf_N4A0u6dFN7tTXiwb5Ch5cg&s=10",
+                  name: "Oliver",
+                  location: "Austin, TX",
+                  age: "3 Years"
+                },
+                {
+                  id: "alumni-showcase-4",
+                  src: "https://img77.uenicdn.com/image/upload/v1751916218/business/6e344da1-8157-413b-8f65-3ab350ddf993.jpg",
+                  name: "Charlie & Chloe",
+                  location: "Boulder, CO",
+                  age: "1 Year"
+                }
+              ].map((item) => (
+                <div key={item.id} className="group relative rounded-2xl overflow-hidden shadow-sm bg-stone-100 border border-stone-200">
+                  <div className="aspect-square w-full">
+                    <EditableImage
+                      imageId={item.id}
+                      src={item.src}
+                      alt={item.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity flex flex-col justify-end p-3 text-white">
+                    <h4 className="font-bold text-xs">{item.name}</h4>
+                    <p className="text-[10px] text-stone-300 font-mono">{item.location} • {item.age}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* FILTERS & SEARCH CONTROLS */}
         <section className="mb-10 text-left bg-white border border-stone-200 p-6 rounded-[2rem] shadow-sm">
           <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-6">
@@ -660,7 +734,7 @@ export default function ReviewsView({ reviews, onAddReview, setTab }: ReviewsVie
                       </p>
                     </div>
 
-                    {/* Tag Pills row - Interactive badges that simulate verification details */}
+                    {/* Tag Pills row - Interactive badges that show verification details */}
                     <div className="flex flex-wrap gap-1.5 pt-2">
                       {rev.tags.map((tag, tagIdx) => (
                         <button
