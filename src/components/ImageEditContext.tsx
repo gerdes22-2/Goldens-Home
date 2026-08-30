@@ -244,20 +244,27 @@ export function ImageEditProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-// Global floating bar to activate/deactivate edit mode
+// Global floating bar to activate/deactivate edit mode (Only visible to logged-in Breeders/Admins)
 function GlobalEditModeToggler() {
   const { isEditMode, setEditMode, resetCustomImages, customImages } = useImageEdit();
+  const { isAdmin } = useAdminAuth();
   const [showNotification, setShowNotification] = useState(false);
 
   useEffect(() => {
-    // Show a small bounce notification if there are custom images
+    // Only trigger notifications if admin is logged in
+    if (!isAdmin) return;
     const count = Object.keys(customImages).length;
-    if (count > 0) {
+    if (count > 0 && isEditMode) {
       setShowNotification(true);
       const timer = setTimeout(() => setShowNotification(false), 5000);
       return () => clearTimeout(timer);
     }
-  }, [customImages]);
+  }, [customImages, isAdmin, isEditMode]);
+
+  // NEVER show the floating bar to regular public visitors or logged-out users
+  if (!isAdmin) {
+    return null;
+  }
 
   return (
     <div className="fixed bottom-24 left-6 z-[60] flex flex-col gap-2 items-start pointer-events-auto">
@@ -290,7 +297,7 @@ function GlobalEditModeToggler() {
           >
             <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping shrink-0" />
             <span className="text-[11px] leading-tight">
-              <strong>Image Editor is ACTIVE:</strong> Click any photo on the site to replace it!
+              <strong>Admin Image Editor is ACTIVE:</strong> Click any photo on the site to replace it!
             </span>
           </motion.div>
         )}
@@ -300,7 +307,7 @@ function GlobalEditModeToggler() {
         <div className="flex items-center gap-2">
           <div className={`w-2.5 h-2.5 rounded-full ${isEditMode ? 'bg-emerald-500 animate-ping' : 'bg-gold-500'}`} />
           <span className="text-[10px] font-mono font-black text-stone-700 uppercase tracking-widest">
-            {isEditMode ? 'Editor: Active' : 'Image Editor'}
+            {isEditMode ? 'Admin Editor: ON' : 'Admin Visuals'}
           </span>
         </div>
 

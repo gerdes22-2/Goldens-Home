@@ -9,6 +9,7 @@ import { collection, getDocs, doc, updateDoc, getDoc, setDoc } from 'firebase/fi
 import { db } from '../firebase';
 import { AdoptionApplication } from '../types';
 import { useAdminAuth } from './AdminAuthContext';
+import { useImageEdit } from './ImageEditContext';
 
 interface ContactMessage {
   id: string;
@@ -224,8 +225,11 @@ export default function BreederDashboardView({ setTab }: BreederDashboardViewPro
   const [messages, setMessages] = useState<ContactMessage[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeSubTab, setActiveSubTab] = useState<'applications' | 'messages' | 'litters' | 'financials' | 'smtp' | 'notify_waitlist'>('applications');
+  const [activeSubTab, setActiveSubTab] = useState<'applications' | 'messages' | 'litters' | 'financials' | 'smtp' | 'notify_waitlist' | 'images'>('applications');
   const [selectedApp, setSelectedApp] = useState<AdoptionApplication | null>(null);
+  
+  // Image Edit Context Hook for Admin Management
+  const { isEditMode, setEditMode, customImages, saveCustomImage, resetCustomImages, openEditor } = useImageEdit();
 
   // SMTP Live Status and Diagnostics
   const [smtpStatus, setSmtpStatus] = useState<{
@@ -845,6 +849,14 @@ Golden Paws Director`
             }`}
           >
             📢 Broadcast Alert
+          </button>
+          <button
+            onClick={() => { setActiveSubTab('images'); setSelectedApp(null); }}
+            className={`pb-4 text-xs font-black uppercase tracking-wider border-b-2 whitespace-nowrap transition-all ${
+              activeSubTab === 'images' ? 'border-amber-600 text-navy-950 font-black' : 'border-transparent text-gray-400 font-bold'
+            }`}
+          >
+            🖼️ Website Photos & Media
           </button>
         </div>
 
@@ -2146,6 +2158,124 @@ Golden Paws Director`
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 7: WEBSITE PHOTOS & MEDIA MANAGEMENT (ADMIN ONLY) */}
+        {activeSubTab === 'images' && (
+          <div className="bg-white rounded-3xl border border-gray-200 p-6 sm:p-8 shadow-sm space-y-8 text-left">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-gray-150 pb-6">
+              <div>
+                <span className="text-xs font-mono font-bold text-amber-600 tracking-wider uppercase block mb-1">
+                  Visual Branding & Media Center
+                </span>
+                <h2 className="text-xl sm:text-2xl font-black text-navy-950">
+                  Website Images & Visual Editor Control
+                </h2>
+                <p className="text-xs text-gray-500 mt-1 max-w-2xl">
+                  Manage all puppy photos, ranch gallery pictures, and sire/dam portraits. The interactive on-page editor is private and only available to authenticated administrators.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setEditMode(!isEditMode)}
+                  className={`px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-md cursor-pointer flex items-center gap-2 ${
+                    isEditMode
+                      ? 'bg-emerald-600 hover:bg-emerald-700 text-white ring-2 ring-emerald-400/30'
+                      : 'bg-navy-950 hover:bg-gold-500 hover:text-navy-950 text-white'
+                  }`}
+                >
+                  <Sparkles className="w-4 h-4 text-gold-400" />
+                  {isEditMode ? 'Exit Live Edit Mode' : 'Activate Live Click-to-Edit'}
+                </button>
+              </div>
+            </div>
+
+            {/* Quick Status Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="p-4 bg-gray-50 rounded-2xl border border-gray-150">
+                <span className="text-[10px] font-mono font-bold text-gray-400 uppercase block">Active Replaced Photos</span>
+                <strong className="text-2xl font-black text-navy-950">{Object.keys(customImages).length}</strong>
+                <p className="text-[11px] text-gray-500 mt-1">Custom images synced with database and disk.</p>
+              </div>
+
+              <div className="p-4 bg-gray-50 rounded-2xl border border-gray-150">
+                <span className="text-[10px] font-mono font-bold text-gray-400 uppercase block">On-Screen Editor Status</span>
+                <strong className={`text-base font-black flex items-center gap-1.5 mt-1 ${isEditMode ? 'text-emerald-600' : 'text-gray-600'}`}>
+                  <span className={`w-2.5 h-2.5 rounded-full ${isEditMode ? 'bg-emerald-500 animate-ping' : 'bg-gray-400'}`} />
+                  {isEditMode ? 'Enabled for Admin' : 'Hidden from Public'}
+                </strong>
+                <p className="text-[11px] text-gray-500 mt-1">Only you can see and trigger the image swap tools.</p>
+              </div>
+
+              <div className="p-4 bg-gray-50 rounded-2xl border border-gray-150 flex flex-col justify-between">
+                <div>
+                  <span className="text-[10px] font-mono font-bold text-gray-400 uppercase block">Reset to Factory Originals</span>
+                  <p className="text-[11px] text-gray-500 mt-1">Revert all replacements back to original defaults.</p>
+                </div>
+                {Object.keys(customImages).length > 0 && (
+                  <button
+                    onClick={resetCustomImages}
+                    className="mt-3 w-fit px-3 py-1.5 text-xs text-red-600 hover:text-white bg-red-50 hover:bg-red-600 font-bold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <RefreshCw className="w-3.5 h-3.5" /> Revert All Photos
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* List of Replaced Images with previews */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-mono font-black uppercase text-gray-700 tracking-wider">
+                Currently Customized Image Slots
+              </h3>
+
+              {Object.keys(customImages).length === 0 ? (
+                <div className="p-8 text-center bg-gray-50 rounded-2xl border border-dashed border-gray-200 space-y-2">
+                  <p className="text-xs font-bold text-gray-500">All photos are currently using standard ranch assets.</p>
+                  <p className="text-[11px] text-gray-400">Click &quot;Activate Live Click-to-Edit&quot; to browse the site and click any picture you want to swap with your own puppy photos!</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                  {Object.entries(customImages).map(([key, src]) => (
+                    <div key={key} className="bg-gray-50 border border-gray-200 rounded-2xl p-3 space-y-2 relative group overflow-hidden">
+                      <div className="h-36 w-full rounded-xl overflow-hidden bg-gray-200 relative">
+                        <img 
+                          src={src} 
+                          alt={key} 
+                          className="w-full h-full object-cover"
+                          referrerPolicy="no-referrer"
+                        />
+                        <button
+                          onClick={() => openEditor(key, src)}
+                          className="absolute inset-0 bg-navy-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold gap-1 cursor-pointer"
+                        >
+                          <Sparkles className="w-4 h-4 text-gold-400" /> Replace
+                        </button>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-mono font-bold text-gray-500 truncate max-w-[160px]">{key}</span>
+                        <span className="text-[9px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">Customized</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* How to use guidelines */}
+            <div className="p-5 bg-amber-500/10 border border-amber-500/20 rounded-2xl text-xs text-navy-950 space-y-2">
+              <strong className="font-bold flex items-center gap-1.5 text-amber-900">
+                <Sparkles className="w-4 h-4 text-amber-600" /> How Live Click-to-Edit Works:
+              </strong>
+              <ol className="list-decimal list-inside space-y-1 text-[11px] text-gray-700 leading-relaxed">
+                <li>Click <strong>&quot;Activate Live Click-to-Edit&quot;</strong> above (or using the bottom-left admin floating widget).</li>
+                <li>Navigate through your website tabs (Puppies, Parents, Gallery, About).</li>
+                <li>Click directly on any photo to open the upload dialogue, choose a photo from your computer, or paste a new URL.</li>
+                <li>Your chosen photos are saved permanently across all devices and Netlify deployments.</li>
+              </ol>
             </div>
           </div>
         )}
