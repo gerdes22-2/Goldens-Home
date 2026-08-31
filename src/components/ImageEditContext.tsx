@@ -114,7 +114,7 @@ export function ImageEditProvider({ children }: { children: React.ReactNode }) {
   const saveCustomImage = async (idOrSrc: string, newSrc: string) => {
     let finalSrc = newSrc;
     
-    // If it's a base64 image, upload to server permanent storage (Cloudinary or local static asset)
+    // If it's a base64 image, upload to server permanent storage (Netlify Blobs, Cloudinary, or local static asset)
     if (newSrc.startsWith('data:')) {
       try {
         const uploadRes = await fetch('/api/upload-image', {
@@ -122,14 +122,14 @@ export function ImageEditProvider({ children }: { children: React.ReactNode }) {
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ image: newSrc })
+          body: JSON.stringify({ image: newSrc, id: idOrSrc })
         });
         
         if (uploadRes.ok) {
           const data = await uploadRes.json();
           if (data.success && data.url) {
             finalSrc = data.url;
-            console.log('Successfully saved image and obtained permanent asset URL:', finalSrc);
+            console.log('Successfully saved image and obtained permanent asset URL (Netlify Blobs / Local):', finalSrc);
           }
         }
       } catch (uploadErr) {
@@ -210,9 +210,16 @@ export function ImageEditProvider({ children }: { children: React.ReactNode }) {
   };
 
   const resolveImage = (idOrSrc: string, fallbackSrc?: string) => {
-    if (customImages[idOrSrc]) return customImages[idOrSrc];
-    if (fallbackSrc && customImages[fallbackSrc]) return customImages[fallbackSrc];
-    return fallbackSrc || idOrSrc;
+    let resolved = customImages[idOrSrc] || (fallbackSrc ? customImages[fallbackSrc] : undefined) || fallbackSrc || idOrSrc;
+    
+    // Safety guard: if stored customization or fallback is an expired/blocked gstatic URL, route to bundled local asset
+    if (resolved && typeof resolved === 'string' && (resolved.includes('gstatic.com') || resolved.includes('encrypted-tbn0') || resolved.includes('uenicdn.com'))) {
+      if (idOrSrc.includes('d1') || idOrSrc.includes('Bella') || idOrSrc.includes('dam')) return '/images/patriotic_goldens_bandana_1782303395345.jpg';
+      if (idOrSrc.includes('s2') || idOrSrc.includes('Sterling')) return '/images/valley_ranch_sunset_1782303523047.jpg';
+      if (idOrSrc.includes('s1') || idOrSrc.includes('Rusty') || idOrSrc.includes('sire')) return '/images/sire_dam_parents_1782218119495.jpg';
+      return '/images/breeder_two_fluffy_pups_1782303458269.jpg';
+    }
+    return resolved;
   };
 
   return (
@@ -717,7 +724,7 @@ function ImageEditorModal({
                   <div className="flex items-start gap-2">
                     <Shield className="w-4 h-4 text-gold-500 shrink-0 mt-0.5" />
                     <p className="text-[10px] text-stone-500 leading-normal">
-                      Your changes will update <strong>instantly</strong> on this computer and persist across sessions. To export or share your customized site, simply click the <strong>Share</strong> button in AI Studio!
+                      Photos are stored permanently in <strong>Netlify Blobs Storage</strong> and served directly from your custom domain (<code>/api/image?key=...</code>), ensuring they remain visible everywhere after deployment.
                     </p>
                   </div>
                 </div>
@@ -746,15 +753,26 @@ export function EditableImage({ imageId, src, className, alt, loading, ...props 
   // Use unique imageId if specified, else fall back to the raw source path as key
   const effectiveId = imageId || src || '';
   const resolvedSrc = resolveImage(effectiveId, src);
+  const [imgSrc, setImgSrc] = useState(resolvedSrc);
+
+  useEffect(() => {
+    setImgSrc(resolvedSrc);
+  }, [resolvedSrc]);
+
+  const handleImgError = () => {
+    // If the image fails to load (e.g. invalid URL, offline, adblocker), fallback to guaranteed bundled asset
+    setImgSrc('/images/breeder_two_fluffy_pups_1782303458269.jpg');
+  };
 
   if (!isEditMode) {
     return (
       <img
-        src={resolvedSrc}
+        src={imgSrc}
         className={className}
         alt={alt}
         loading={loading}
         referrerPolicy="no-referrer"
+        onError={handleImgError}
         title="Double-click to customize photo with the Editor"
         onDoubleClick={(e) => {
           e.stopPropagation();
@@ -776,11 +794,12 @@ export function EditableImage({ imageId, src, className, alt, loading, ...props 
       }}
     >
       <img
-        src={resolvedSrc}
+        src={imgSrc}
         className={`${className || 'w-full h-full object-cover'} group-hover:scale-105 transition-transform duration-300`}
         alt={alt}
         loading={loading}
         referrerPolicy="no-referrer"
+        onError={handleImgError}
         {...props}
       />
       

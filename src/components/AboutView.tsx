@@ -84,7 +84,7 @@ export default function AboutView({ setTab }: AboutViewProps) {
         prcdPRA2: "Clear / Normal",
         ichthyosis: "Clear / Normal"
       },
-      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWgaPeVYeT9FB11SnKgeFCOHEiHqZjTARPNLo4GSnEWw&s=10"
+      image: "/images/sire_dam_parents_1782218119495.jpg"
     },
     {
       id: "BELLA-145",
@@ -102,7 +102,7 @@ export default function AboutView({ setTab }: AboutViewProps) {
         prcdPRA2: "Carrier / Unaffected (Safe Pairing)",
         ichthyosis: "Clear / Normal"
       },
-      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdK7ddClHyzsLsb8nBUBTa7gitdyV7un8UveZIF6K65Q&s=10"
+      image: "/images/patriotic_goldens_bandana_1782303395345.jpg"
     },
     {
       id: "STERLING-204",
@@ -120,7 +120,7 @@ export default function AboutView({ setTab }: AboutViewProps) {
         prcdPRA2: "Clear / Normal",
         ichthyosis: "Clear / Normal"
       },
-      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRhYqIPh_lv__rFkV1mJlIXK_KTtqCHMAPRH8Nn1L2LFw&s"
+      image: "/images/valley_ranch_sunset_1782303523047.jpg"
     }
   ];
 

@@ -155,6 +155,37 @@ async function startServer() {
     }
   });
 
+  // API: Serve uploaded blob image by key
+  app.get("/api/image", (req, res) => {
+    try {
+      const key = (req.query.key as string) || "";
+      if (!key) {
+        return res.status(400).send("Missing image key parameter");
+      }
+
+      // Check if file exists in public/images
+      const filename = key.startsWith("blob_img_") || key.startsWith("uploaded_") ? key : path.basename(key);
+      const filePath = path.join(process.cwd(), "public", "images", filename);
+
+      if (fs.existsSync(filePath)) {
+        const ext = path.extname(filePath).toLowerCase();
+        let mime = "image/jpeg";
+        if (ext === ".png") mime = "image/png";
+        if (ext === ".webp") mime = "image/webp";
+        if (ext === ".svg") mime = "image/svg+xml";
+
+        res.setHeader("Content-Type", mime);
+        res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+        return fs.createReadStream(filePath).pipe(res);
+      }
+
+      // If not on disk, return 404 or redirect to fallback
+      return res.status(404).send("Image not found");
+    } catch (e: any) {
+      return res.status(500).send(e?.message || "Internal error");
+    }
+  });
+
   // API: Cloudinary & Local Resilient Permanent Image Upload
   app.post("/api/upload-image", async (req, res) => {
     try {

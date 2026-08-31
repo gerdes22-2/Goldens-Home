@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a192f"/>
+      <stop offset="50%" stop-color="#0f2b48"/>
+      <stop offset="100%" stop-color="#071224"/>
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFF3B0"/>
+      <stop offset="30%" stop-color="#F3C64F"/>
+      <stop offset="70%" stop-color="#D49A24"/>
+      <stop offset="100%" stop-color="#9E6B08"/>
+    </linearGradient>
+    <linearGradient id="goldGlow" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FCD34D" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#B45309" stop-opacity="0.7"/>
+    </linearGradient>
+    <filter id="subtleShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.45"/>
+    </filter>
+    <filter id="goldShine" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#F59E0B" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <!-- Base Rounded Container -->
+  <rect width="512" height="512" rx="112" fill="url(#bgGrad)"/>
+  
+  <!-- Subtle Elegant Gold Outer Ring -->
+  <rect x="16" y="16" width="480" height="480" rx="96" fill="none" stroke="url(#goldGrad)" stroke-width="6" opacity="0.65"/>
+  <rect x="28" y="28" width="456" height="456" rx="84" fill="none" stroke="#F59E0B" stroke-width="1.5" stroke-dasharray="8 8" opacity="0.4"/>
+
+  <!-- Golden Paw Silhouette with Heart Emblem in Center Pad -->
+  <g filter="url(#subtleShadow)">
+    <!-- Main Center Pad (Stylized Heart/Shield Hybrid) -->
+    <path d="M 256 250 C 230 220 180 230 180 280 C 180 340 256 395 256 395 C 256 395 332 340 332 280 C 332 230 282 220 256 250 Z" 
+          fill="url(#goldGrad)" 
+          filter="url(#goldShine)"/>
+    
+    <!-- Left Inner Toe -->
+    <ellipse cx="195" cy="185" rx="34" ry="46" transform="rotate(-18 195 185)" fill="url(#goldGrad)"/>
+    
+    <!-- Left Outer Toe -->
+    <ellipse cx="125" cy="235" rx="30" ry="40" transform="rotate(-40 125 235)" fill="url(#goldGrad)"/>
+    
+    <!-- Right Inner Toe -->
+    <ellipse cx="317" cy="185" rx="34" ry="46" transform="rotate(18 317 185)" fill="url(#goldGrad)"/>
+    
+    <!-- Right Outer Toe -->
+    <ellipse cx="387" cy="235" rx="30" ry="40" transform="rotate(40 387 235)" fill="url(#goldGrad)"/>
+
+    <!-- Subtle Paw Highlights / Sparkles -->
+    <path d="M 256 425 L 260 435 L 270 439 L 260 443 L 256 453 L 252 443 L 242 439 L 252 435 Z" fill="#FFF3B0" opacity="0.9"/>
+  </g>
+</svg>

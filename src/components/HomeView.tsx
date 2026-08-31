@@ -33,7 +33,7 @@ export default function HomeView({ puppies, setTab, setSelectedPuppy, setMatched
 
   const slides = [
     {
-      image: "https://img77.uenicdn.com/image/upload/v1751916218/business/6e344da1-8157-413b-8f65-3ab350ddf993.jpg",
+      image: "/images/ranch_pack_hero_banner_1782302897974.jpg",
       eyebrow: "Sovereign Health Standards Since 1998",
       title: "Breeding Excellence",
       titleItalic: "With Devotion",
@@ -42,7 +42,7 @@ export default function HomeView({ puppies, setTab, setSelectedPuppy, setMatched
       secondaryCta: "Ranch Heritage"
     },
     {
-      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWgaPeVYeT9FB11SnKgeFCOHEiHqZjTARPNLo4GSnEWw&s=10",
+      image: "/images/sire_dam_parents_1782218119495.jpg",
       eyebrow: "OFA Good & Excellent Rated Parents",
       title: "Championship Genetics",
       titleItalic: "Pure Bloodlines",
@@ -51,7 +51,7 @@ export default function HomeView({ puppies, setTab, setSelectedPuppy, setMatched
       secondaryCta: "View Certifications"
     },
     {
-      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSP8BVGkmJcXofy_kqhSdf_N4A0u6dFN7tTXiwb5Ch5cg&s=10",
+      image: "/images/breeder_dozen_puppies_grass_1782302919140.jpg",
       eyebrow: "Early Neurological Socialization",
       title: "Molded For Character",
       titleItalic: "Gentle Spirits",
@@ -114,7 +114,7 @@ export default function HomeView({ puppies, setTab, setSelectedPuppy, setMatched
     {
       id: 1,
       category: 'social',
-      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTxgYv_xAXM-OX64GhGacyr1qnEekffPlIQbaUjsFueQ&s",
+      image: "/images/ranch_pack_hero_banner_1782302897974.jpg",
       tag: "Hand-Raised",
       title: "Physical Socialization",
       description: "Daily open pasture play and sensory yard activities fostering balanced, joyful dispositions.",
@@ -124,7 +124,7 @@ export default function HomeView({ puppies, setTab, setSelectedPuppy, setMatched
     {
       id: 2,
       category: 'vet',
-      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRN5u5Ai_ZmnIcjCl1CNd79Qr3wsbylZDvWC_9KWyBYjQ&s",
+      image: "/images/valley_ranch_sunset_1782303523047.jpg",
       tag: "Vet Clinic Pass",
       title: "Structured Diagnostics",
       description: "Rigorous veterinarian physical evaluations, cardiac checks, and certified OFA standards.",
@@ -134,7 +134,7 @@ export default function HomeView({ puppies, setTab, setSelectedPuppy, setMatched
     {
       id: 3,
       category: 'social',
-      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdK7ddClHyzsLsb8nBUBTa7gitdyV7un8UveZIF6K65Q&s=10",
+      image: "/images/patriotic_goldens_bandana_1782303395345.jpg",
       tag: "Certified Blood",
       title: "Heritage Lineage",
       description: "Our foundation parents embody generations of gentle temperament and award-winning conformation.",
@@ -144,7 +144,7 @@ export default function HomeView({ puppies, setTab, setSelectedPuppy, setMatched
     {
       id: 4,
       category: 'training',
-      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQBtlSDqNbCfRArbnRLpybDcIH68MrxEOBWWTJwYmwP-g&s=10",
+      image: "/images/breeder_three_puppies_1782303426621.jpg",
       tag: "ENS Trained",
       title: "Active Outdoor Drills",
       description: "Early recall foundation, obstacle confidence, and structured learning in our ranch gardens.",

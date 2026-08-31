@@ -8,7 +8,7 @@ export const DEFAULT_PARENTS: ParentDog[] = [
     breed: 'Golden Retriever',
     weight: '75 lbs',
     color: 'Red Golden',
-    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWgaPeVYeT9FB11SnKgeFCOHEiHqZjTARPNLo4GSnEWw&s=10',
+    image: '/images/sire_dam_parents_1782218119495.jpg',
     personality: 'Highly athletic and extremely affectionate. Rusty is a field champion with a heart of gold. He loves dock diving and curling up with his family in the evening.',
     healthClearances: {
       hips: 'OFA Excellent',
@@ -26,7 +26,7 @@ export const DEFAULT_PARENTS: ParentDog[] = [
     breed: 'Golden Retriever',
     weight: '62 lbs',
     color: 'Honey Golden',
-    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdK7ddClHyzsLsb8nBUBTa7gitdyV7un8UveZIF6K65Q&s=10',
+    image: '/images/patriotic_goldens_bandana_1782303395345.jpg',
     personality: 'The perfect mother. Bella has a maternal instinct that is second to none. She is incredibly gentle, patient, and possesses an "off-switch" that makes her the perfect house companion.',
     healthClearances: {
       hips: 'OFA Good',
@@ -44,7 +44,7 @@ export const DEFAULT_PARENTS: ParentDog[] = [
     breed: 'English Cream Golden Retriever',
     weight: '72 lbs',
     color: 'Cream',
-    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRhYqIPh_lv__rFkV1mJlIXK_KTtqCHMAPRH8Nn1L2LFw&s',
+    image: '/images/valley_ranch_sunset_1782303523047.jpg',
     personality: 'A true gentleman. Sterling is known for his stoic yet loving personality. He is very observant and incredibly easy to train, often learning new commands in just 2-3 repetitions.',
     healthClearances: {
       hips: 'OFA Good',
@@ -88,7 +88,7 @@ export const CARE_RESOURCES: ResourceItem[] = [
     description: 'A step-by-step guide to helping your new Golden Retriever adjust to their new environment with minimal stress.',
     category: 'New Puppy Tips',
     readTime: '5 min',
-    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs8rHhS0_e7yxIJFkUf-k7683q54zjPhXhpgzI7RF5-g&s=10',
+    image: '/images/puppies_breeder_lap_1782218082781.jpg',
     content: 'The first 48 hours are crucial for establishing trust and routine...'
   },
   {
@@ -97,7 +97,7 @@ export const CARE_RESOURCES: ResourceItem[] = [
     description: 'Why large-breed puppy food matters and how to avoid the "growth spurts" that can impact joint health.',
     category: 'Nutrition',
     readTime: '8 min',
-    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUSLgf8pK_Pecv5eDy4AP3w_jkp7fLGi52McuUmQZ-ww&s=10',
+    image: '/images/puppy_chewing_bone_1782303411084.jpg',
     content: 'Feeding a Golden Retriever puppy requires a balance of calcium and phosphorus...'
   },
   {
@@ -106,7 +106,7 @@ export const CARE_RESOURCES: ResourceItem[] = [
     description: 'Expert techniques to make the crate a happy sanctuary rather than a confinement tool.',
     category: 'Training',
     readTime: '6 min',
-    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQBtlSDqNbCfRArbnRLpybDcIH68MrxEOBWWTJwYmwP-g&s=10',
+    image: '/images/puppies_witch_hats_1782303440786.jpg',
     content: 'Consistency is key when it comes to crate training...'
   }
 ];
@@ -114,112 +114,112 @@ export const CARE_RESOURCES: ResourceItem[] = [
 export const GALLERY_IMAGES: GalleryImage[] = [
   { 
     id: 'g-sire1', 
-    url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWgaPeVYeT9FB11SnKgeFCOHEiHqZjTARPNLo4GSnEWw&s=10', 
+    url: '/images/sire_dam_parents_1782218119495.jpg', 
     caption: 'GCH Rusty of Golden Paws — AKC Grand Champion Sire & Certified OFA Field Lineage.', 
     category: 'Parents & Heritage', 
     aspectRatio: 'tall' 
   },
   { 
     id: 'g-dam1', 
-    url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdK7ddClHyzsLsb8nBUBTa7gitdyV7un8UveZIF6K65Q&s=10', 
+    url: '/images/patriotic_goldens_bandana_1782303395345.jpg', 
     caption: 'Lady Bella of Amber Acres — Foundation Dam known for gentle maternal nature and obedience.', 
     category: 'Parents & Heritage', 
     aspectRatio: 'square' 
   },
   { 
     id: 'g-sire2', 
-    url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRhYqIPh_lv__rFkV1mJlIXK_KTtqCHMAPRH8Nn1L2LFw&s', 
+    url: '/images/valley_ranch_sunset_1782303523047.jpg', 
     caption: 'Sir Sterling of Sunny Hills — English Cream Sire with calm temperaments and champion bloodlines.', 
     category: 'Parents & Heritage', 
     aspectRatio: 'tall' 
   },
   { 
     id: 'g-play1', 
-    url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTxgYv_xAXM-OX64GhGacyr1qnEekffPlIQbaUjsFueQ&s', 
+    url: '/images/ranch_pack_hero_banner_1782302897974.jpg', 
     caption: 'Pasture Exploration — Daily energetic play and social discovery across our private ranch fields.', 
     category: 'Ranch Life', 
     aspectRatio: 'square' 
   },
   { 
     id: 'g-portrait1', 
-    url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs8rHhS0_e7yxIJFkUf-k7683q54zjPhXhpgzI7RF5-g&s=10', 
+    url: '/images/breeder_two_fluffy_pups_1782303458269.jpg', 
     caption: 'Gentle Soul — A quiet moment demonstrating our hallmark calm eye contact and gentle disposition.', 
     category: 'Training & Care', 
     aspectRatio: 'tall' 
   },
   { 
     id: 'g-sit1', 
-    url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQBtlSDqNbCfRArbnRLpybDcIH68MrxEOBWWTJwYmwP-g&s=10', 
+    url: '/images/breeder_three_puppies_1782303426621.jpg', 
     caption: 'Obedience & Focus — Early grass recall and sit-stay milestones in the ranch garden.', 
     category: 'Training & Care', 
     aspectRatio: 'square' 
   },
   { 
     id: 'g-field1', 
-    url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHcZ9N3bTXycZ_SoDn8od_fPWAktFVGVfPeBrsCrfXgw&s=10', 
+    url: '/images/valley_ranch_sunset_1782303523047.jpg', 
     caption: 'Autumn Field Run — Athletic conformation, rich golden coat, and boundless spirit.', 
     category: 'Ranch Life', 
     aspectRatio: 'video' 
   },
   { 
     id: 'g-happy1', 
-    url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUSLgf8pK_Pecv5eDy4AP3w_jkp7fLGi52McuUmQZ-ww&s=10', 
+    url: '/images/puppy_red_harness_1782218136476.jpg', 
     caption: 'Pure Joy — Sunny afternoon retrieval exercises strengthening natural instincts.', 
     category: 'Ranch Life', 
     aspectRatio: 'square' 
   },
   { 
     id: 'g-profile1', 
-    url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6q0APseNz6pgqBofEdx--iROWFLaavcGapWpMQG6knA&s=10', 
+    url: '/images/sire_dam_parents_1782218119495.jpg', 
     caption: 'Genomic Purity — Classic broad skull, warm brown eyes, and perfect breed standard head study.', 
     category: 'Parents & Heritage', 
     aspectRatio: 'square' 
   },
   { 
     id: 'g-run1', 
-    url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSP8BVGkmJcXofy_kqhSdf_N4A0u6dFN7tTXiwb5Ch5cg&s=10', 
+    url: '/images/ranch_pack_hero_banner_1782302897974.jpg', 
     caption: 'Valley Run — Full stride across our fenced green pastures during morning exercise.', 
     category: 'Ranch Life', 
     aspectRatio: 'video' 
   },
   { 
     id: 'g-stand1', 
-    url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT9HmdGl_VCy9MpdHhRu6CGZZjrARbk0YRn4yw0OES8Gg&s=10', 
+    url: '/images/patriotic_goldens_bandana_1782303395345.jpg', 
     caption: 'Ranch Watch — Confident and alert, embodying the steadfast loyalty of the Golden Retriever.', 
     category: 'Ranch Life', 
     aspectRatio: 'tall' 
   },
   { 
     id: 'g-alumni1', 
-    url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTbtX00h5shPCA5pr_nyVy-EZCMcMMN4GiG60NNq2KLQA&s=10', 
+    url: '/images/ciara_breeder_portrait_1782303471681.jpg', 
     caption: 'Alumni Graduate — Thriving in his forever home with loving adopters in Seattle.', 
     category: 'Alumni', 
     aspectRatio: 'square' 
   },
   { 
     id: 'g-noble1', 
-    url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRN5u5Ai_ZmnIcjCl1CNd79Qr3wsbylZDvWC_9KWyBYjQ&s', 
+    url: '/images/valley_ranch_sunset_1782303523047.jpg', 
     caption: 'Champion Stance — Perfect skeletal symmetry and balanced bone density.', 
     category: 'Parents & Heritage', 
     aspectRatio: 'tall' 
   },
   { 
     id: 'g-studio1', 
-    url: 'https://img77.uenicdn.com/image/upload/v1751916218/business/6e344da1-8157-413b-8f65-3ab350ddf993.jpg', 
+    url: '/images/sire_dam_parents_1782218119495.jpg', 
     caption: 'Sanctuary Portrait — Signature Golden Paws coat feathering and warm expression.', 
     category: 'Parents & Heritage', 
     aspectRatio: 'square' 
   },
   { 
     id: 'g-pup1', 
-    url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqrI5bUaiXQtIoMFeGaA-bHIfIqYuPAha8vecZKzV7cA&s=10', 
+    url: '/images/three_puppies_table_1782218102698.jpg', 
     caption: 'Early Socialization — Confident sensory introduction during the foundational BioSens weeks.', 
     category: 'Training & Care', 
     aspectRatio: 'square' 
   },
   { 
     id: 'g-head1', 
-    url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGgGZOrRolcDwZ58AOfcfsMw2aUjsH0pBT-QgJQfJ86g&s=10', 
+    url: '/images/puppy_chewing_bone_1782303411084.jpg', 
     caption: 'Devoted Expression — Intelligent, gentle, and deeply tuned to human emotion.', 
     category: 'Parents & Heritage', 
     aspectRatio: 'square' 

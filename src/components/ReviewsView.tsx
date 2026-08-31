@@ -573,28 +573,28 @@ export default function ReviewsView({ reviews, onAddReview, setTab }: ReviewsVie
               {[
                 {
                   id: "alumni-showcase-1",
-                  src: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTbtX00h5shPCA5pr_nyVy-EZCMcMMN4GiG60NNq2KLQA&s=10",
+                  src: "/images/ciara_breeder_portrait_1782303471681.jpg",
                   name: "Bella & River",
                   location: "Aspen, CO",
                   age: "2.5 Years"
                 },
                 {
                   id: "alumni-showcase-2",
-                  src: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTxgYv_xAXM-OX64GhGacyr1qnEekffPlIQbaUjsFueQ&s",
+                  src: "/images/ranch_pack_hero_banner_1782302897974.jpg",
                   name: "Leo & Family",
                   location: "Seattle, WA",
                   age: "1.5 Years"
                 },
                 {
                   id: "alumni-showcase-3",
-                  src: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSP8BVGkmJcXofy_kqhSdf_N4A0u6dFN7tTXiwb5Ch5cg&s=10",
+                  src: "/images/breeder_dozen_puppies_grass_1782302919140.jpg",
                   name: "Oliver",
                   location: "Austin, TX",
                   age: "3 Years"
                 },
                 {
                   id: "alumni-showcase-4",
-                  src: "https://img77.uenicdn.com/image/upload/v1751916218/business/6e344da1-8157-413b-8f65-3ab350ddf993.jpg",
+                  src: "/images/patriotic_goldens_bandana_1782303395345.jpg",
                   name: "Charlie & Chloe",
                   location: "Boulder, CO",
                   age: "1 Year"

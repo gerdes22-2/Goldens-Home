@@ -11,38 +11,47 @@ import ParentsView from './ParentsView';
 import { EditableImage } from './ImageEditContext';
 
 const PUPPY_GROWTH_PHOTOS: Record<string, { age: string, url: string }[]> = {
-  'Waffles': [
-    { age: 'Week 2', url: 'https://images.unsplash.com/photo-1507146426996-ef05306b995a?auto=format&fit=crop&q=80&w=600' },
-    { age: 'Week 5', url: 'https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&q=80&w=600' },
-    { age: 'Week 8', url: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=600' },
-    { age: 'Week 10', url: 'https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&q=80&w=600' }
+  'Pink Girl': [
+    { age: 'Week 2', url: '/images/breeder_two_fluffy_pups_1782303458269.jpg' },
+    { age: 'Week 5', url: '/images/breeder_three_puppies_1782303426621.jpg' },
+    { age: 'Week 8', url: '/images/breeder_dozen_puppies_grass_1782302919140.jpg' },
+    { age: 'Current', url: '/images/breeder_two_fluffy_pups_1782303458269.jpg' }
   ],
-  'Daisy': [
-    { age: 'Week 2', url: 'https://images.unsplash.com/photo-1591768793355-74d7c2d26056?auto=format&fit=crop&q=80&w=600' },
-    { age: 'Week 5', url: 'https://images.unsplash.com/photo-1537151625747-768eb6cf92b2?auto=format&fit=crop&q=80&w=600' },
-    { age: 'Week 8', url: 'https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?auto=format&fit=crop&q=80&w=600' },
-    { age: 'Week 10', url: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?auto=format&fit=crop&q=80&w=600' }
+  'Blue Boy': [
+    { age: 'Week 2', url: '/images/puppy_chewing_bone_1782303411084.jpg' },
+    { age: 'Week 5', url: '/images/three_puppies_table_1782218102698.jpg' },
+    { age: 'Week 8', url: '/images/puppies_breeder_lap_1782218082781.jpg' },
+    { age: 'Current', url: '/images/puppy_chewing_bone_1782303411084.jpg' }
   ],
-  'Rusty': [
-    { age: 'Week 2', url: 'https://images.unsplash.com/photo-1558788353-f76d92427f16?auto=format&fit=crop&q=80&w=600' },
-    { age: 'Week 5', url: 'https://images.unsplash.com/photo-1560743641-3914f2c45636?auto=format&fit=crop&q=80&w=600' },
-    { age: 'Week 8', url: 'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&q=80&w=600' },
-    { age: 'Week 10', url: 'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&q=80&w=600' }
+  'Yellow Girl': [
+    { age: 'Week 2', url: '/images/breeder_three_puppies_1782303426621.jpg' },
+    { age: 'Week 5', url: '/images/breeder_two_fluffy_pups_1782303458269.jpg' },
+    { age: 'Week 8', url: '/images/puppy_red_harness_1782218136476.jpg' },
+    { age: 'Current', url: '/images/breeder_three_puppies_1782303426621.jpg' }
   ],
-  'Luna': [
-    { age: 'Week 2', url: 'https://images.unsplash.com/photo-1518020382113-a718b7f2f643?auto=format&fit=crop&q=80&w=600' },
-    { age: 'Week 5', url: 'https://images.unsplash.com/photo-1505628346881-b72b27e84530?auto=format&fit=crop&q=80&w=600' },
-    { age: 'Week 8', url: 'https://images.unsplash.com/photo-1596492784531-6e6eb5ea9993?auto=format&fit=crop&q=80&w=600' }
+  'Green Boy': [
+    { age: 'Week 2', url: '/images/puppies_witch_hats_1782303440786.jpg' },
+    { age: 'Week 5', url: '/images/three_puppies_table_1782218102698.jpg' },
+    { age: 'Week 8', url: '/images/breeder_dozen_puppies_grass_1782302919140.jpg' },
+    { age: 'Current', url: '/images/puppies_witch_hats_1782303440786.jpg' }
   ],
-  'Buster': [
-    { age: 'Week 2', url: 'https://images.unsplash.com/photo-1507146426996-ef05306b995a?auto=format&fit=crop&q=80&w=600' },
-    { age: 'Week 5', url: 'https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&q=80&w=600' },
-    { age: 'Week 8', url: 'https://images.unsplash.com/photo-1560807707-8cc77767d783?auto=format&fit=crop&q=80&w=600' }
+  'Red Girl': [
+    { age: 'Week 2', url: '/images/puppy_red_harness_1782218136476.jpg' },
+    { age: 'Week 5', url: '/images/breeder_two_fluffy_pups_1782303458269.jpg' },
+    { age: 'Week 8', url: '/images/breeder_three_puppies_1782303426621.jpg' },
+    { age: 'Current', url: '/images/puppy_red_harness_1782218136476.jpg' }
   ],
-  'Biscuit': [
-    { age: 'Week 2', url: 'https://images.unsplash.com/photo-1591768793355-74d7c2d26056?auto=format&fit=crop&q=80&w=600' },
-    { age: 'Week 5', url: 'https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?auto=format&fit=crop&q=80&w=600' },
-    { age: 'Week 8', url: 'https://images.unsplash.com/photo-1537151625747-768eb6cf92b2?auto=format&fit=crop&q=80&w=600' }
+  'White Boy': [
+    { age: 'Week 2', url: '/images/three_puppies_table_1782218102698.jpg' },
+    { age: 'Week 5', url: '/images/puppies_breeder_lap_1782218082781.jpg' },
+    { age: 'Week 8', url: '/images/puppy_chewing_bone_1782303411084.jpg' },
+    { age: 'Current', url: '/images/three_puppies_table_1782218102698.jpg' }
+  ],
+  'Black Boy': [
+    { age: 'Week 2', url: '/images/breeder_dozen_puppies_grass_1782302919140.jpg' },
+    { age: 'Week 5', url: '/images/puppy_red_harness_1782218136476.jpg' },
+    { age: 'Week 8', url: '/images/breeder_two_fluffy_pups_1782303458269.jpg' },
+    { age: 'Current', url: '/images/breeder_dozen_puppies_grass_1782302919140.jpg' }
   ]
 };
 
