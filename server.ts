@@ -81,6 +81,34 @@ async function startServer() {
     }
   };
 
+  // API: Get puppies inventory
+  app.get("/api/puppies", async (req, res) => {
+    try {
+      const jsonPath = path.join(process.cwd(), 'src', 'puppies.json');
+      if (fs.existsSync(jsonPath)) {
+        const fileData = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+        return res.json(fileData);
+      }
+      return res.json([]);
+    } catch (error) {
+      console.error("Failed to read puppies inventory:", error);
+      return res.json([]);
+    }
+  });
+
+  app.post("/api/puppies", async (req, res) => {
+    try {
+      const payload = req.body || [];
+      const jsonPath = path.join(process.cwd(), 'src', 'puppies.json');
+      fs.writeFileSync(jsonPath, JSON.stringify(payload, null, 2), 'utf8');
+      console.log("Successfully saved updated puppies inventory to server disk!");
+      return res.json({ success: true });
+    } catch (error) {
+      console.error("Failed to save puppies inventory:", error);
+      return res.status(500).json({ success: false, error: error instanceof Error ? error.message : 'Unknown error' });
+    }
+  });
+
   // API: Get custom images
   app.get("/api/custom-images", async (req, res) => {
     try {

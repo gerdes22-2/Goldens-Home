@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Mail, Sparkles, X as LucideX, ShieldCheck } from 'lucide-react';
 import Header from './components/Header';
@@ -20,6 +20,7 @@ import HealthAuditView from './components/HealthAuditView';
 import JournalView from './components/JournalView';
 import BreederDashboardView from './components/BreederDashboardView';
 import FloatingQuickNav from './components/FloatingQuickNav';
+import PuppyModal from './components/PuppyModal';
 
 import { DEFAULT_PUPPIES, DEFAULT_REVIEWS, DEFAULT_WAITLIST } from './data';
 import { Puppy, Review, WaitlistEntry, AdoptionApplication } from './types';
@@ -29,10 +30,32 @@ export default function App() {
   const [history, setHistory] = useState<string[]>(['home']);
   const [historyIndex, setHistoryIndex] = useState<number>(0);
 
-  const [puppies, setPuppies] = useState<Puppy[]>(DEFAULT_PUPPIES);
+  const [puppies, setPuppiesState] = useState<Puppy[]>(DEFAULT_PUPPIES);
   const [reviews, setReviews] = useState<Review[]>(DEFAULT_REVIEWS);
   const [waitlist, setWaitlist] = useState<WaitlistEntry[]>(DEFAULT_WAITLIST);
   const [selectedPuppy, setSelectedPuppy] = useState<Puppy | null>(null);
+
+  // Load puppies from server API on mount
+  useEffect(() => {
+    fetch('/api/puppies')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          setPuppiesState(data);
+        }
+      })
+      .catch(err => console.warn('Could not load server puppies:', err));
+  }, []);
+
+  const setPuppies = (newPuppies: Puppy[] | ((prev: Puppy[]) => Puppy[])) => {
+    const updated = typeof newPuppies === 'function' ? newPuppies(puppies) : newPuppies;
+    setPuppiesState(updated);
+    fetch('/api/puppies', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updated)
+    }).catch(err => console.warn('Could not sync puppies to server:', err));
+  };
   
   // Navigation Handler with history recording
   const setTab = useCallback((newTab: string) => {
@@ -310,6 +333,14 @@ export default function App() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* GLOBAL PEDIGREE & PUPPY MODAL */}
+      <PuppyModal 
+        selectedPuppy={selectedPuppy}
+        setSelectedPuppy={setSelectedPuppy}
+        setTab={setTab}
+        setMatchedPuppyName={setMatchedPuppyName}
+      />
 
     </div>
   );

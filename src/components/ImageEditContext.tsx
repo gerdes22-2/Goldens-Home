@@ -212,12 +212,19 @@ export function ImageEditProvider({ children }: { children: React.ReactNode }) {
   const resolveImage = (idOrSrc: string, fallbackSrc?: string) => {
     let resolved = customImages[idOrSrc] || (fallbackSrc ? customImages[fallbackSrc] : undefined) || fallbackSrc || idOrSrc;
     
-    // Safety guard: if stored customization or fallback is an expired/blocked gstatic URL, route to bundled local asset
-    if (resolved && typeof resolved === 'string' && (resolved.includes('gstatic.com') || resolved.includes('encrypted-tbn0') || resolved.includes('uenicdn.com'))) {
+    // Safety guard: if stored customization or fallback is an expired/blocked external URL or empty, route directly to bundled local asset
+    if (!resolved || typeof resolved !== 'string' || resolved.includes('gstatic.com') || resolved.includes('encrypted-tbn0') || resolved.includes('uenicdn.com')) {
       if (idOrSrc.includes('d1') || idOrSrc.includes('Bella') || idOrSrc.includes('dam')) return '/images/patriotic_goldens_bandana_1782303395345.jpg';
       if (idOrSrc.includes('s2') || idOrSrc.includes('Sterling')) return '/images/valley_ranch_sunset_1782303523047.jpg';
       if (idOrSrc.includes('s1') || idOrSrc.includes('Rusty') || idOrSrc.includes('sire')) return '/images/sire_dam_parents_1782218119495.jpg';
-      return '/images/breeder_two_fluffy_pups_1782303458269.jpg';
+      if (idOrSrc.includes('p1') || idOrSrc.includes('Pink')) return '/images/breeder_two_fluffy_pups_1782303458269.jpg';
+      if (idOrSrc.includes('p2') || idOrSrc.includes('Blue')) return '/images/puppy_chewing_bone_1782303411084.jpg';
+      if (idOrSrc.includes('p3') || idOrSrc.includes('Yellow')) return '/images/breeder_three_puppies_1782303426621.jpg';
+      if (idOrSrc.includes('p4') || idOrSrc.includes('Green')) return '/images/puppies_witch_hats_1782303440786.jpg';
+      if (idOrSrc.includes('p5') || idOrSrc.includes('Red')) return '/images/puppy_red_harness_1782218136476.jpg';
+      if (idOrSrc.includes('p6') || idOrSrc.includes('White')) return '/images/three_puppies_table_1782218102698.jpg';
+      if (idOrSrc.includes('p7') || idOrSrc.includes('Black')) return '/images/breeder_dozen_puppies_grass_1782302919140.jpg';
+      return fallbackSrc || idOrSrc || '/images/breeder_two_fluffy_pups_1782303458269.jpg';
     }
     return resolved;
   };

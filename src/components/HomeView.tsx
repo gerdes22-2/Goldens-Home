@@ -684,6 +684,7 @@ export default function HomeView({ puppies, setTab, setSelectedPuppy, setMatched
                 >
                   <div className="relative aspect-[4/3] overflow-hidden bg-gold-50">
                     <EditableImage 
+                      imageId={`gallery-moment-${item.id}`}
                       src={item.image} 
                       alt={item.title} 
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"

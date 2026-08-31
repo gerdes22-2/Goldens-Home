@@ -1,0 +1,128 @@
+[
+  {
+    "id": "p1",
+    "name": "Pink Girl",
+    "birthDate": "2026-05-13",
+    "gender": "Female",
+    "color": "Honey Golden",
+    "price": 850,
+    "weight": "12.4 lbs",
+    "image": "/images/breeder_two_fluffy_pups_1782303458269.jpg",
+    "status": "Available",
+    "description": "Pink Girl is the absolute sweet-heart of the litter. She is incredibly calm, observant, and loves to cuddle with our kids during our evening ranch walks.",
+    "characteristics": ["Gentle", "Cuddle-Bug", "Extremely Human-Focused", "Great with Kids"],
+    "parents": {
+      "sire": "GCH Rusty of Golden Paws (OFA Excellent, Eyes Normal)",
+      "dam": "Lady Bella of Amber Acres (OFA Good, Cardiological Normal)"
+    },
+    "registrations": ["AKC Registered", "OFA Heart & Hips Certified", "1-Year Health Guarantee", "Microchipped"]
+  },
+  {
+    "id": "p2",
+    "name": "Blue Boy",
+    "birthDate": "2026-05-13",
+    "gender": "Male",
+    "color": "Cream",
+    "price": 850,
+    "weight": "13.1 lbs",
+    "image": "/images/puppy_chewing_bone_1782303411084.jpg",
+    "status": "Available",
+    "description": "Blue Boy is a bold, energetic explorer! He loves to retrieve tennis balls and is the first to greet us at the puppy gate every morning.",
+    "characteristics": ["Adventurous", "High Intelligence", "Bold", "Quick Learner"],
+    "parents": {
+      "sire": "GCH Rusty of Golden Paws (OFA Excellent, Eyes Normal)",
+      "dam": "Lady Bella of Amber Acres (OFA Good, Cardiological Normal)"
+    },
+    "registrations": ["AKC Registered", "OFA Elbows & Hips Certified", "1-Year Health Guarantee", "Microchipped"]
+  },
+  {
+    "id": "p3",
+    "name": "Yellow Girl",
+    "birthDate": "2026-05-13",
+    "gender": "Female",
+    "color": "Honey Golden",
+    "price": 850,
+    "weight": "12.8 lbs",
+    "image": "/images/breeder_three_puppies_1782303426621.jpg",
+    "status": "Available",
+    "description": "Yellow Girl is a confident, happy pup with a lovely, soft-spoken personality. She is gentle in play and very eager to please.",
+    "characteristics": ["Eager to Please", "Attentive", "Affectionate", "Soft-spoken"],
+    "parents": {
+      "sire": "GCH Rusty of Golden Paws (OFA Excellent, Eyes Normal)",
+      "dam": "Lady Bella of Amber Acres (OFA Good, Cardiological Normal)"
+    },
+    "registrations": ["AKC Registered", "OFA Heart & Hips Certified", "1-Year Health Guarantee", "Microchipped"]
+  },
+  {
+    "id": "p4",
+    "name": "Green Boy",
+    "birthDate": "2026-05-13",
+    "gender": "Male",
+    "color": "Cream",
+    "price": 850,
+    "weight": "13.3 lbs",
+    "image": "/images/puppies_witch_hats_1782303440786.jpg",
+    "status": "Available",
+    "description": "Green Boy is a stocky, playful little gentleman. He is very observant, calm, and is already showing excellent focus in basic training sessions.",
+    "characteristics": ["Social Butterfly", "Gentle Mouth", "Calm Temperament", "Great with Cats"],
+    "parents": {
+      "sire": "GCH Rusty of Golden Paws (OFA Excellent, Eyes Normal)",
+      "dam": "Lady Bella of Amber Acres (OFA Good, Cardiological Normal)"
+    },
+    "registrations": ["AKC Registered", "OFA Heart & Hips Certified", "1-Year Health Guarantee", "Microchipped"]
+  },
+  {
+    "id": "p5",
+    "name": "Red Girl",
+    "birthDate": "2026-05-13",
+    "gender": "Female",
+    "color": "Red Golden",
+    "price": 850,
+    "weight": "12.5 lbs",
+    "image": "/images/puppy_red_harness_1782218136476.jpg",
+    "status": "Available",
+    "description": "Red Girl is a spunky little firecracker! With her beautiful red coat and high energy, she is perfect for an active family looking for a hiking companion.",
+    "characteristics": ["High Stamina", "Playful", "Very Smart", "Extremely Affectionate"],
+    "parents": {
+      "sire": "GCH Rusty of Golden Paws (OFA Excellent, Eyes Normal)",
+      "dam": "Lady Bella of Amber Acres (OFA Good, Cardiological Normal)"
+    },
+    "registrations": ["AKC Registered", "OFA Heart & Hips Certified", "1-Year Health Guarantee", "Microchipped"]
+  },
+  {
+    "id": "p6",
+    "name": "White Boy",
+    "birthDate": "2026-05-13",
+    "gender": "Male",
+    "color": "Cream",
+    "price": 850,
+    "weight": "13.0 lbs",
+    "image": "/images/three_puppies_table_1782218102698.jpg",
+    "status": "Available",
+    "description": "White Boy is incredibly laid-back and enjoys his nap times. He has a wonderful, gentle play style and gets along well with all his siblings.",
+    "characteristics": ["Very Sweet", "Laid-Back", "Gentle Playstyle", "Human-Focused"],
+    "parents": {
+      "sire": "GCH Rusty of Golden Paws (OFA Excellent, Eyes Normal)",
+      "dam": "Lady Bella of Amber Acres (OFA Good, Cardiological Normal)"
+    },
+    "registrations": ["AKC Registered", "OFA Heart & Hips Certified", "1-Year Health Guarantee", "Microchipped"]
+  },
+  {
+    "id": "p7",
+    "name": "Black Boy",
+    "birthDate": "2026-05-13",
+    "gender": "Male",
+    "color": "Honey Golden",
+    "price": 850,
+    "weight": "12.9 lbs",
+    "image": "/images/breeder_dozen_puppies_grass_1782302919140.jpg",
+    "status": "Available",
+    "description": "Black Boy is a curious, high-energy pup who loves to explore every inch of the ranch. He is already learning to follow basic commands.",
+    "characteristics": ["Inquisitive", "Active", "Smart", "Great with Kids"],
+    "parents": {
+      "sire": "GCH Rusty of Golden Paws (OFA Excellent, Eyes Normal)",
+      "dam": "Lady Bella of Amber Acres (OFA Good, Cardiological Normal)"
+    },
+    "registrations": ["AKC Registered", "OFA Heart & Hips Certified", "1-Year Health Guarantee", "Microchipped"]
+  }
+]
