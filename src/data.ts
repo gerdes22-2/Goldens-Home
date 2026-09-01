@@ -8,7 +8,7 @@ export const DEFAULT_PARENTS: ParentDog[] = [
     breed: 'Golden Retriever',
     weight: '75 lbs',
     color: 'Red Golden',
-    image: '/images/sire_dam_parents_1782218119495.jpg',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSnnflJvX4NvZzNZxVeTQtCdnvjh-AMe33FlDfjyr7IEA&s=10',
     personality: 'Highly athletic and extremely affectionate. Rusty is a field champion with a heart of gold. He loves dock diving and curling up with his family in the evening.',
     healthClearances: {
       hips: 'OFA Excellent',
@@ -26,7 +26,7 @@ export const DEFAULT_PARENTS: ParentDog[] = [
     breed: 'Golden Retriever',
     weight: '62 lbs',
     color: 'Honey Golden',
-    image: '/images/patriotic_goldens_bandana_1782303395345.jpg',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRm62zW76R9zTTSkjuMRDR9YuLVjN8J7IpMUxIYvaRxdA&s=10',
     personality: 'The perfect mother. Bella has a maternal instinct that is second to none. She is incredibly gentle, patient, and possesses an "off-switch" that makes her the perfect house companion.',
     healthClearances: {
       hips: 'OFA Good',
@@ -44,7 +44,7 @@ export const DEFAULT_PARENTS: ParentDog[] = [
     breed: 'English Cream Golden Retriever',
     weight: '72 lbs',
     color: 'Cream',
-    image: '/images/valley_ranch_sunset_1782303523047.jpg',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvTbAG8SaKUDgEZc_x0TyVSYul-Htv6YiWa83833dZag&s',
     personality: 'A true gentleman. Sterling is known for his stoic yet loving personality. He is very observant and incredibly easy to train, often learning new commands in just 2-3 repetitions.',
     healthClearances: {
       hips: 'OFA Good',
@@ -88,7 +88,7 @@ export const CARE_RESOURCES: ResourceItem[] = [
     description: 'A step-by-step guide to helping your new Golden Retriever adjust to their new environment with minimal stress.',
     category: 'New Puppy Tips',
     readTime: '5 min',
-    image: '/images/puppies_breeder_lap_1782218082781.jpg',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT52wSUpWCZlNa0MQ_QJVxKn5qF9UiRfSmpeACSDXLfDg&s',
     content: 'The first 48 hours are crucial for establishing trust and routine...'
   },
   {
@@ -97,7 +97,7 @@ export const CARE_RESOURCES: ResourceItem[] = [
     description: 'Why large-breed puppy food matters and how to avoid the "growth spurts" that can impact joint health.',
     category: 'Nutrition',
     readTime: '8 min',
-    image: '/images/puppy_chewing_bone_1782303411084.jpg',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8cx6Z16Y1EgoTAujGC7ptmNyB5ST4NPz6HeuDdxcXIw&s=10',
     content: 'Feeding a Golden Retriever puppy requires a balance of calcium and phosphorus...'
   },
   {
@@ -106,7 +106,7 @@ export const CARE_RESOURCES: ResourceItem[] = [
     description: 'Expert techniques to make the crate a happy sanctuary rather than a confinement tool.',
     category: 'Training',
     readTime: '6 min',
-    image: '/images/puppies_witch_hats_1782303440786.jpg',
+    image: 'https://static.wixstatic.com/media/ca3310_1bd05b47367f4e58bbebb5a7a6e3828b~mv2.jpeg/v1/fill/w_155,h_155,q_90,enc_avif,quality_auto/ca3310_1bd05b47367f4e58bbebb5a7a6e3828b~mv2.jpeg',
     content: 'Consistency is key when it comes to crate training...'
   }
 ];
@@ -114,112 +114,112 @@ export const CARE_RESOURCES: ResourceItem[] = [
 export const GALLERY_IMAGES: GalleryImage[] = [
   { 
     id: 'g-sire1', 
-    url: '/images/sire_dam_parents_1782218119495.jpg', 
+    url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSnnflJvX4NvZzNZxVeTQtCdnvjh-AMe33FlDfjyr7IEA&s=10', 
     caption: 'GCH Rusty of Golden Paws — AKC Grand Champion Sire & Certified OFA Field Lineage.', 
     category: 'Parents & Heritage', 
     aspectRatio: 'tall' 
   },
   { 
     id: 'g-dam1', 
-    url: '/images/patriotic_goldens_bandana_1782303395345.jpg', 
+    url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRm62zW76R9zTTSkjuMRDR9YuLVjN8J7IpMUxIYvaRxdA&s=10', 
     caption: 'Lady Bella of Amber Acres — Foundation Dam known for gentle maternal nature and obedience.', 
     category: 'Parents & Heritage', 
     aspectRatio: 'square' 
   },
   { 
     id: 'g-sire2', 
-    url: '/images/valley_ranch_sunset_1782303523047.jpg', 
+    url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvTbAG8SaKUDgEZc_x0TyVSYul-Htv6YiWa83833dZag&s', 
     caption: 'Sir Sterling of Sunny Hills — English Cream Sire with calm temperaments and champion bloodlines.', 
     category: 'Parents & Heritage', 
     aspectRatio: 'tall' 
   },
   { 
     id: 'g-play1', 
-    url: '/images/ranch_pack_hero_banner_1782302897974.jpg', 
+    url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT59PCcWyRTY-YANdEPgAl7P6cAx5fVBBSOpRpj9ClKEA&s', 
     caption: 'Pasture Exploration — Daily energetic play and social discovery across our private ranch fields.', 
     category: 'Ranch Life', 
     aspectRatio: 'square' 
   },
   { 
     id: 'g-portrait1', 
-    url: '/images/breeder_two_fluffy_pups_1782303458269.jpg', 
+    url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIQM6dY2ReliD5_LNWDE8dfCShem-LS-M6Nf1mrnwYFQ&s', 
     caption: 'Gentle Soul — A quiet moment demonstrating our hallmark calm eye contact and gentle disposition.', 
     category: 'Training & Care', 
     aspectRatio: 'tall' 
   },
   { 
     id: 'g-sit1', 
-    url: '/images/breeder_three_puppies_1782303426621.jpg', 
+    url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3ZoGxCGYdQ3wFfUUHS3F1ggwsNyCJPtaN0kR00o4JzA&s=10', 
     caption: 'Obedience & Focus — Early grass recall and sit-stay milestones in the ranch garden.', 
     category: 'Training & Care', 
     aspectRatio: 'square' 
   },
   { 
     id: 'g-field1', 
-    url: '/images/valley_ranch_sunset_1782303523047.jpg', 
+    url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSl5gAMlnaEwZ16f3ponAYGqfMVIHScM77_uN-o1hbtxg&s', 
     caption: 'Autumn Field Run — Athletic conformation, rich golden coat, and boundless spirit.', 
     category: 'Ranch Life', 
     aspectRatio: 'video' 
   },
   { 
     id: 'g-happy1', 
-    url: '/images/puppy_red_harness_1782218136476.jpg', 
+    url: 'https://static.wixstatic.com/media/ca3310_50f4b673562249f4914835d407c157b9~mv2.jpeg/v1/fill/w_980,h_653,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/ca3310_50f4b673562249f4914835d407c157b9~mv2.jpeg', 
     caption: 'Pure Joy — Sunny afternoon retrieval exercises strengthening natural instincts.', 
     category: 'Ranch Life', 
     aspectRatio: 'square' 
   },
   { 
     id: 'g-profile1', 
-    url: '/images/sire_dam_parents_1782218119495.jpg', 
+    url: 'https://static.wixstatic.com/media/ca3310_cf6fcb58629645da9a07d8a6054724dc~mv2.jpeg/v1/fill/w_980,h_1307,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/ca3310_cf6fcb58629645da9a07d8a6054724dc~mv2.jpeg', 
     caption: 'Genomic Purity — Classic broad skull, warm brown eyes, and perfect breed standard head study.', 
     category: 'Parents & Heritage', 
     aspectRatio: 'square' 
   },
   { 
     id: 'g-run1', 
-    url: '/images/ranch_pack_hero_banner_1782302897974.jpg', 
+    url: 'https://tse3.mm.bing.net/th/id/OIP.0AihFrnRIgiEHeRYak6XfQHaLH?r=0&pid=ImgDet&w=203&h=304&c=7&o=7&rm=3', 
     caption: 'Valley Run — Full stride across our fenced green pastures during morning exercise.', 
     category: 'Ranch Life', 
     aspectRatio: 'video' 
   },
   { 
     id: 'g-stand1', 
-    url: '/images/patriotic_goldens_bandana_1782303395345.jpg', 
+    url: 'https://th.bing.com/th/id/OIP.ZVx6sKoEZV-scBoKSz73EgHaE7?w=279&h=186&c=7&r=0&o=7&pid=1.7&rm=3', 
     caption: 'Ranch Watch — Confident and alert, embodying the steadfast loyalty of the Golden Retriever.', 
     category: 'Ranch Life', 
     aspectRatio: 'tall' 
   },
   { 
     id: 'g-alumni1', 
-    url: '/images/ciara_breeder_portrait_1782303471681.jpg', 
+    url: 'https://tse2.mm.bing.net/th/id/OIP.dd4qIdns4RpeWnOwcVJ2ogHaE7?r=0&pid=ImgDet&w=203&h=135&c=7&o=7&rm=3', 
     caption: 'Alumni Graduate — Thriving in his forever home with loving adopters in Seattle.', 
     category: 'Alumni', 
     aspectRatio: 'square' 
   },
   { 
     id: 'g-noble1', 
-    url: '/images/valley_ranch_sunset_1782303523047.jpg', 
+    url: 'https://tse4.mm.bing.net/th/id/OIP.82YAtwBnDlPI7PLsUZ_zxwHaED?r=0&pid=ImgDet&w=203&h=111&c=7&o=7&rm=3', 
     caption: 'Champion Stance — Perfect skeletal symmetry and balanced bone density.', 
     category: 'Parents & Heritage', 
     aspectRatio: 'tall' 
   },
   { 
     id: 'g-studio1', 
-    url: '/images/sire_dam_parents_1782218119495.jpg', 
+    url: 'https://tse4.mm.bing.net/th/id/OIP.1K15rzd-rbkqJg8B4rTqYQHaE8?r=0&pid=ImgDet&w=203&h=135&c=7&o=7&rm=3', 
     caption: 'Sanctuary Portrait — Signature Golden Paws coat feathering and warm expression.', 
     category: 'Parents & Heritage', 
     aspectRatio: 'square' 
   },
   { 
     id: 'g-pup1', 
-    url: '/images/three_puppies_table_1782218102698.jpg', 
+    url: 'https://tse4.mm.bing.net/th/id/OIP.BMLAKVZ7KXr02XZOf1da5QHaE7?r=0&pid=ImgDet&w=474&h=315&rs=1&o=7&rm=3', 
     caption: 'Early Socialization — Confident sensory introduction during the foundational BioSens weeks.', 
     category: 'Training & Care', 
     aspectRatio: 'square' 
   },
   { 
     id: 'g-head1', 
-    url: '/images/puppy_chewing_bone_1782303411084.jpg', 
+    url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQp0DkPmtCv3OcVr8ca0K_vri73uK77dWNm1nozs4buJA&s', 
     caption: 'Devoted Expression — Intelligent, gentle, and deeply tuned to human emotion.', 
     category: 'Parents & Heritage', 
     aspectRatio: 'square' 
@@ -235,7 +235,7 @@ export const DEFAULT_PUPPIES: Puppy[] = [
     color: 'Honey Golden',
     price: 850,
     weight: '12.4 lbs',
-    image: '/images/breeder_two_fluffy_pups_1782303458269.jpg',
+    image: 'https://www.image2url.com/r2/default/images/1788259322638-617a0590-f4ea-4bfb-a62b-4e62a6d687df.jpg',
     status: 'Available',
     description: 'Pink Girl is the absolute sweet-heart of the litter. She is incredibly calm, observant, and loves to cuddle with our kids during our evening ranch walks.',
     characteristics: ['Gentle', 'Cuddle-Bug', 'Extremely Human-Focused', 'Great with Kids'],
@@ -253,7 +253,7 @@ export const DEFAULT_PUPPIES: Puppy[] = [
     color: 'Cream',
     price: 850,
     weight: '13.1 lbs',
-    image: '/images/puppy_chewing_bone_1782303411084.jpg',
+    image: 'https://www.image2url.com/r2/default/images/1788259433437-a8292adc-ef10-44e6-be80-916fb748d3e4.jpg',
     status: 'Available',
     description: 'Blue Boy is a bold, energetic explorer! He loves to retrieve tennis balls and is the first to greet us at the puppy gate every morning.',
     characteristics: ['Adventurous', 'High Intelligence', 'Bold', 'Quick Learner'],
@@ -271,7 +271,7 @@ export const DEFAULT_PUPPIES: Puppy[] = [
     color: 'Honey Golden',
     price: 850,
     weight: '12.8 lbs',
-    image: '/images/breeder_three_puppies_1782303426621.jpg',
+    image: 'https://www.image2url.com/r2/default/images/1788261233332-2413ab93-4f90-4406-b5a3-b69ba4b29187.jpg',
     status: 'Available',
     description: 'Yellow Girl is a confident, happy pup with a lovely, soft-spoken personality. She is gentle in play and very eager to please.',
     characteristics: ['Eager to Please', 'Attentive', 'Affectionate', 'Soft-spoken'],
@@ -289,7 +289,7 @@ export const DEFAULT_PUPPIES: Puppy[] = [
     color: 'Cream',
     price: 850,
     weight: '13.3 lbs',
-    image: '/images/puppies_witch_hats_1782303440786.jpg',
+    image: 'https://www.image2url.com/r2/default/images/1788261304517-61b9991f-b757-47a5-a815-3205888e50f1.jpg',
     status: 'Available',
     description: 'Green Boy is a stocky, playful little gentleman. He is very observant, calm, and is already showing excellent focus in basic training sessions.',
     characteristics: ['Social Butterfly', 'Gentle Mouth', 'Calm Temperament', 'Great with Cats'],
@@ -307,7 +307,7 @@ export const DEFAULT_PUPPIES: Puppy[] = [
     color: 'Red Golden',
     price: 850,
     weight: '12.5 lbs',
-    image: '/images/puppy_red_harness_1782218136476.jpg',
+    image: 'https://www.image2url.com/r2/default/images/1788261371538-f350a105-973a-424e-86e0-546b8711d84a.jpg',
     status: 'Available',
     description: 'Red Girl is a spunky little firecracker! With her beautiful red coat and high energy, she is perfect for an active family looking for a hiking companion.',
     characteristics: ['High Stamina', 'Playful', 'Very Smart', 'Extremely Affectionate'],
@@ -325,7 +325,7 @@ export const DEFAULT_PUPPIES: Puppy[] = [
     color: 'Cream',
     price: 850,
     weight: '13.0 lbs',
-    image: '/images/three_puppies_table_1782218102698.jpg',
+    image: 'https://www.image2url.com/r2/default/images/1788261510508-10324ec5-f31e-407c-9a97-47c2ad2c4b0f.jpg',
     status: 'Available',
     description: 'White Boy is incredibly laid-back and enjoys his nap times. He has a wonderful, gentle play style and gets along well with all his siblings.',
     characteristics: ['Very Sweet', 'Laid-Back', 'Gentle Playstyle', 'Human-Focused'],
@@ -343,7 +343,7 @@ export const DEFAULT_PUPPIES: Puppy[] = [
     color: 'Honey Golden',
     price: 850,
     weight: '12.9 lbs',
-    image: '/images/breeder_dozen_puppies_grass_1782302919140.jpg',
+    image: 'https://www.image2url.com/r2/default/images/1788259108247-f7ed094d-83b0-44a5-9b3a-5f7ec8c73736.jpg',
     status: 'Available',
     description: 'Black Boy is a curious, high-energy pup who loves to explore every inch of the ranch. He is already learning to follow basic commands.',
     characteristics: ['Inquisitive', 'Active', 'Smart', 'Great with Kids'],

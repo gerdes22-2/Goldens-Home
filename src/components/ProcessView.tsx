@@ -59,7 +59,7 @@ export default function ProcessView({ setTab }: ProcessViewProps) {
       desc: "Architect your household profile. We evaluate matching logic and family dynamics to ensure a symbiotic placement.",
       detailedInstructions: "In this phase, you submit our comprehensive family questionnaire. We look at household activity levels, pet experience, yard security, and schedule compatibility to match the right temperament.",
       checklist: ["Submit detailed lifestyle questionnaire", "Review of answers by Ciara within 48 hours", "Initial compatibility rating assigned"],
-      image: "/images/breeder_two_fluffy_pups_1782303458269.jpg"
+      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQp0DkPmtCv3OcVr8ca0K_vri73uK77dWNm1nozs4buJA&s"
     },
     {
       step: "02",
@@ -68,7 +68,7 @@ export default function ProcessView({ setTab }: ProcessViewProps) {
       desc: "A focused consultation to discuss genomic goals, planned litters, and early environment coordination.",
       detailedInstructions: "A 20-minute phone dialogue to discuss your aesthetic, size, and temperament preferences. We walk through upcoming sire/dam matching matrices to align with your seasonal timeline.",
       checklist: ["Schedule focused 1-on-1 dialogue", "Confirm coat color & gender preference", "Coordinate puppy delivery options"],
-      image: "/images/puppy_chewing_bone_1782303411084.jpg"
+      image: "https://static.wixstatic.com/media/ca3310_50f4b673562249f4914835d407c157b9~mv2.jpeg/v1/fill/w_980,h_653,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/ca3310_50f4b673562249f4914835d407c157b9~mv2.jpeg"
     },
     {
       step: "03",
@@ -77,7 +77,7 @@ export default function ProcessView({ setTab }: ProcessViewProps) {
       desc: "An approved reservation secures your standing in our master archives, prioritizing you for upcoming seasonal litters.",
       detailedInstructions: "Approved families lock in their waitlist rank order. Our dashboard displays real-time waitlist status, upcoming litter milestones, and exact gestation countdowns.",
       checklist: ["Submit waitlist reservation fee", "Log account on digital parent tracker", "Establish communication alert triggers"],
-      image: "/images/patriotic_goldens_bandana_1782303395345.jpg"
+      image: "https://static.wixstatic.com/media/ca3310_cf6fcb58629645da9a07d8a6054724dc~mv2.jpeg/v1/fill/w_980,h_1307,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/ca3310_cf6fcb58629645da9a07d8a6054724dc~mv2.jpeg"
     },
     {
       step: "04",
@@ -86,7 +86,7 @@ export default function ProcessView({ setTab }: ProcessViewProps) {
       desc: "At 6 weeks, selections open in order of standing. Experience real-time behavioral streams and ranch visits.",
       detailedInstructions: "The magic moment! At 6 weeks of age, selections open sequentially based on waitlist position. We provide individual HD videos, behavioral test cards, and clinical health reports.",
       checklist: ["View 6-week behavioral profiling stream", "Attend virtual or in-person selection meet", "Confirm permanent selection matching"],
-      image: "/images/three_puppies_table_1782218102698.jpg"
+      image: "https://tse4.mm.bing.net/th/id/OIP.BMLAKVZ7KXr02XZOf1da5QHaE7?r=0&pid=ImgDet&w=474&h=315&rs=1&o=7&rm=3"
     },
     {
       step: "05",
@@ -95,7 +95,7 @@ export default function ProcessView({ setTab }: ProcessViewProps) {
       desc: "At 8 weeks, puppies graduate from ranch life. We provide a comprehensive medical dossier and transition kit.",
       detailedInstructions: "Your graduate departs at 8-10 weeks with a signature transition pack. This includes a certified OFA veterinary dossier, microchip papers, starter food bag, and scent blanket.",
       checklist: ["Clinical 25-step physical check-off", "Sign official purchase contracts", "Receive custom Golden Paws starter kit"],
-      image: "/images/ciara_breeder_portrait_1782303471681.jpg"
+      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQ9BV7p6-9bhHOCUB6aVsOMgQ2tsQFHhQxDeAVa-wlDA&s=10"
     }
   ];
 

@@ -68,7 +68,7 @@ export default function Footer({ setTab }: FooterProps) {
             <div className="flex items-center space-x-3 cursor-pointer group" onClick={() => handleLinkClick('home')}>
               <img
                 id="footer-logo-img"
-                src="/images/golden_paws_logo_1783021185349.jpg"
+                src="https://cdn.corenexis.com/f/9GnFhiW4aBT.png"
                 alt="Golden Paws Home Logo"
                 referrerPolicy="no-referrer"
                 className="w-12 h-12 object-cover rounded-full border border-gold-500 shadow-lg"

@@ -12,46 +12,46 @@ import { EditableImage } from './ImageEditContext';
 
 const PUPPY_GROWTH_PHOTOS: Record<string, { age: string, url: string }[]> = {
   'Pink Girl': [
-    { age: 'Week 2', url: '/images/breeder_two_fluffy_pups_1782303458269.jpg' },
-    { age: 'Week 5', url: '/images/breeder_three_puppies_1782303426621.jpg' },
-    { age: 'Week 8', url: '/images/breeder_dozen_puppies_grass_1782302919140.jpg' },
-    { age: 'Current', url: '/images/breeder_two_fluffy_pups_1782303458269.jpg' }
+    { age: 'Week 2', url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIQM6dY2ReliD5_LNWDE8dfCShem-LS-M6Nf1mrnwYFQ&s' },
+    { age: 'Week 5', url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3ZoGxCGYdQ3wFfUUHS3F1ggwsNyCJPtaN0kR00o4JzA&s=10' },
+    { age: 'Week 8', url: 'https://www.image2url.com/r2/default/images/1788259322638-617a0590-f4ea-4bfb-a62b-4e62a6d687df.jpg' },
+    { age: 'Current', url: 'https://www.image2url.com/r2/default/images/1788259322638-617a0590-f4ea-4bfb-a62b-4e62a6d687df.jpg' }
   ],
   'Blue Boy': [
-    { age: 'Week 2', url: '/images/puppy_chewing_bone_1782303411084.jpg' },
-    { age: 'Week 5', url: '/images/three_puppies_table_1782218102698.jpg' },
-    { age: 'Week 8', url: '/images/puppies_breeder_lap_1782218082781.jpg' },
-    { age: 'Current', url: '/images/puppy_chewing_bone_1782303411084.jpg' }
+    { age: 'Week 2', url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8cx6Z16Y1EgoTAujGC7ptmNyB5ST4NPz6HeuDdxcXIw&s=10' },
+    { age: 'Week 5', url: 'https://tse4.mm.bing.net/th/id/OIP.BMLAKVZ7KXr02XZOf1da5QHaE7?r=0&pid=ImgDet&w=474&h=315&rs=1&o=7&rm=3' },
+    { age: 'Week 8', url: 'https://www.image2url.com/r2/default/images/1788259433437-a8292adc-ef10-44e6-be80-916fb748d3e4.jpg' },
+    { age: 'Current', url: 'https://www.image2url.com/r2/default/images/1788259433437-a8292adc-ef10-44e6-be80-916fb748d3e4.jpg' }
   ],
   'Yellow Girl': [
-    { age: 'Week 2', url: '/images/breeder_three_puppies_1782303426621.jpg' },
-    { age: 'Week 5', url: '/images/breeder_two_fluffy_pups_1782303458269.jpg' },
-    { age: 'Week 8', url: '/images/puppy_red_harness_1782218136476.jpg' },
-    { age: 'Current', url: '/images/breeder_three_puppies_1782303426621.jpg' }
+    { age: 'Week 2', url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT52wSUpWCZlNa0MQ_QJVxKn5qF9UiRfSmpeACSDXLfDg&s' },
+    { age: 'Week 5', url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQp0DkPmtCv3OcVr8ca0K_vri73uK77dWNm1nozs4buJA&s' },
+    { age: 'Week 8', url: 'https://www.image2url.com/r2/default/images/1788261233332-2413ab93-4f90-4406-b5a3-b69ba4b29187.jpg' },
+    { age: 'Current', url: 'https://www.image2url.com/r2/default/images/1788261233332-2413ab93-4f90-4406-b5a3-b69ba4b29187.jpg' }
   ],
   'Green Boy': [
-    { age: 'Week 2', url: '/images/puppies_witch_hats_1782303440786.jpg' },
-    { age: 'Week 5', url: '/images/three_puppies_table_1782218102698.jpg' },
-    { age: 'Week 8', url: '/images/breeder_dozen_puppies_grass_1782302919140.jpg' },
-    { age: 'Current', url: '/images/puppies_witch_hats_1782303440786.jpg' }
+    { age: 'Week 2', url: 'https://static.wixstatic.com/media/ca3310_1bd05b47367f4e58bbebb5a7a6e3828b~mv2.jpeg/v1/fill/w_155,h_155,q_90,enc_avif,quality_auto/ca3310_1bd05b47367f4e58bbebb5a7a6e3828b~mv2.jpeg' },
+    { age: 'Week 5', url: 'https://static.wixstatic.com/media/ca3310_50f4b673562249f4914835d407c157b9~mv2.jpeg/v1/fill/w_980,h_653,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/ca3310_50f4b673562249f4914835d407c157b9~mv2.jpeg' },
+    { age: 'Week 8', url: 'https://www.image2url.com/r2/default/images/1788261304517-61b9991f-b757-47a5-a815-3205888e50f1.jpg' },
+    { age: 'Current', url: 'https://www.image2url.com/r2/default/images/1788261304517-61b9991f-b757-47a5-a815-3205888e50f1.jpg' }
   ],
   'Red Girl': [
-    { age: 'Week 2', url: '/images/puppy_red_harness_1782218136476.jpg' },
-    { age: 'Week 5', url: '/images/breeder_two_fluffy_pups_1782303458269.jpg' },
-    { age: 'Week 8', url: '/images/breeder_three_puppies_1782303426621.jpg' },
-    { age: 'Current', url: '/images/puppy_red_harness_1782218136476.jpg' }
+    { age: 'Week 2', url: 'https://static.wixstatic.com/media/ca3310_cf6fcb58629645da9a07d8a6054724dc~mv2.jpeg/v1/fill/w_980,h_1307,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/ca3310_cf6fcb58629645da9a07d8a6054724dc~mv2.jpeg' },
+    { age: 'Week 5', url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSl5gAMlnaEwZ16f3ponAYGqfMVIHScM77_uN-o1hbtxg&s' },
+    { age: 'Week 8', url: 'https://www.image2url.com/r2/default/images/1788261371538-f350a105-973a-424e-86e0-546b8711d84a.jpg' },
+    { age: 'Current', url: 'https://www.image2url.com/r2/default/images/1788261371538-f350a105-973a-424e-86e0-546b8711d84a.jpg' }
   ],
   'White Boy': [
-    { age: 'Week 2', url: '/images/three_puppies_table_1782218102698.jpg' },
-    { age: 'Week 5', url: '/images/puppies_breeder_lap_1782218082781.jpg' },
-    { age: 'Week 8', url: '/images/puppy_chewing_bone_1782303411084.jpg' },
-    { age: 'Current', url: '/images/three_puppies_table_1782218102698.jpg' }
+    { age: 'Week 2', url: 'https://tse4.mm.bing.net/th/id/OIP.BMLAKVZ7KXr02XZOf1da5QHaE7?r=0&pid=ImgDet&w=474&h=315&rs=1&o=7&rm=3' },
+    { age: 'Week 5', url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT59PCcWyRTY-YANdEPgAl7P6cAx5fVBBSOpRpj9ClKEA&s' },
+    { age: 'Week 8', url: 'https://www.image2url.com/r2/default/images/1788261510508-10324ec5-f31e-407c-9a97-47c2ad2c4b0f.jpg' },
+    { age: 'Current', url: 'https://www.image2url.com/r2/default/images/1788261510508-10324ec5-f31e-407c-9a97-47c2ad2c4b0f.jpg' }
   ],
   'Black Boy': [
-    { age: 'Week 2', url: '/images/breeder_dozen_puppies_grass_1782302919140.jpg' },
-    { age: 'Week 5', url: '/images/puppy_red_harness_1782218136476.jpg' },
-    { age: 'Week 8', url: '/images/breeder_two_fluffy_pups_1782303458269.jpg' },
-    { age: 'Current', url: '/images/breeder_dozen_puppies_grass_1782302919140.jpg' }
+    { age: 'Week 2', url: 'https://th.bing.com/th/id/OIP.ZVx6sKoEZV-scBoKSz73EgHaE7?w=279&h=186&c=7&r=0&o=7&pid=1.7&rm=3' },
+    { age: 'Week 5', url: 'https://tse3.mm.bing.net/th/id/OIP.0AihFrnRIgiEHeRYak6XfQHaLH?r=0&pid=ImgDet&w=203&h=304&c=7&o=7&rm=3' },
+    { age: 'Week 8', url: 'https://www.image2url.com/r2/default/images/1788259108247-f7ed094d-83b0-44a5-9b3a-5f7ec8c73736.jpg' },
+    { age: 'Current', url: 'https://www.image2url.com/r2/default/images/1788259108247-f7ed094d-83b0-44a5-9b3a-5f7ec8c73736.jpg' }
   ]
 };
 

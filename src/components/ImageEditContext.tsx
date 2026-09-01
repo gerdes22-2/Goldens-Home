@@ -8,7 +8,7 @@ import { db } from '../firebase';
 
 // Pre-existing ranch assets that can be chosen from the library
 const PREBUILT_LOCKED_IMAGES = [
-  { url: '/images/golden_paws_logo_1783021185349.jpg', label: 'Golden Paws Home Official Logo' },
+  { url: 'https://cdn.corenexis.com/f/9GnFhiW4aBT.png', label: 'Golden Paws Home Official Logo' },
   { url: '/images/ranch_pack_hero_banner_1782302897974.jpg', label: 'Ranch Herd Banner' },
   { url: '/images/patriotic_goldens_bandana_1782303395345.jpg', label: 'Patriotic Rusty Bandana' },
   { url: '/images/breeder_two_fluffy_pups_1782303458269.jpg', label: 'Bella & Fluffy Puppies' },
@@ -17,7 +17,7 @@ const PREBUILT_LOCKED_IMAGES = [
   { url: '/images/puppy_chewing_bone_1782303411084.jpg', label: 'Puppy Chewing Bone' },
   { url: '/images/breeder_dozen_puppies_grass_1782302919140.jpg', label: 'Litter Playing in Grass' },
   { url: '/images/valley_ranch_sunset_1782303523047.jpg', label: 'Valley Ranch Sunset' },
-  { url: '/images/ciara_breeder_portrait_1782303471681.jpg', label: 'Ciara Breeding Director' }
+  { url: 'https://cdn.corenexis.com/f/zVbY25yT0dt.jpeg', label: 'Ciara Breeding Director' }
 ];
 
 interface ImageEditContextType {
@@ -41,9 +41,18 @@ export function useImageEdit() {
 }
 
 export function ImageEditProvider({ children }: { children: React.ReactNode }) {
+  const { isAdmin } = useAdminAuth();
   const [isEditMode, setEditMode] = useState<boolean>(false);
   const [customImages, setCustomImages] = useState<Record<string, string>>({});
   const [editingImage, setEditingImage] = useState<{ idOrSrc: string; currentSrc: string } | null>(null);
+
+  // Turn off edit mode and close any open editors if not an admin
+  useEffect(() => {
+    if (!isAdmin) {
+      setEditMode(false);
+      setEditingImage(null);
+    }
+  }, [isAdmin]);
 
   // Load custom images from both bundled server config, API, and localstorage on mount
   useEffect(() => {
@@ -112,6 +121,10 @@ export function ImageEditProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const saveCustomImage = async (idOrSrc: string, newSrc: string) => {
+    if (!isAdmin) {
+      console.warn('Unauthorized image save blocked: Admin login required.');
+      return;
+    }
     let finalSrc = newSrc;
     
     // If it's a base64 image, upload to server permanent storage (Netlify Blobs, Cloudinary, or local static asset)
@@ -179,6 +192,10 @@ export function ImageEditProvider({ children }: { children: React.ReactNode }) {
   };
 
   const resetCustomImages = async () => {
+    if (!isAdmin) {
+      console.warn('Unauthorized reset attempt blocked: Admin login required.');
+      return;
+    }
     if (confirm('Are you sure you want to revert all replaced pictures back to the original defaults?')) {
       setCustomImages({});
       localStorage.removeItem('golden_paws_custom_images');
@@ -206,6 +223,10 @@ export function ImageEditProvider({ children }: { children: React.ReactNode }) {
   };
 
   const openEditor = (idOrSrc: string, currentSrc: string) => {
+    if (!isAdmin) {
+      console.warn('Unauthorized image edit attempt blocked: Admin login required.');
+      return;
+    }
     setEditingImage({ idOrSrc, currentSrc });
   };
 
@@ -756,6 +777,7 @@ interface EditableImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
 
 export function EditableImage({ imageId, src, className, alt, loading, ...props }: EditableImageProps) {
   const { isEditMode, openEditor, resolveImage } = useImageEdit();
+  const { isAdmin } = useAdminAuth();
   
   // Use unique imageId if specified, else fall back to the raw source path as key
   const effectiveId = imageId || src || '';
@@ -771,7 +793,8 @@ export function EditableImage({ imageId, src, className, alt, loading, ...props 
     setImgSrc('/images/breeder_two_fluffy_pups_1782303458269.jpg');
   };
 
-  if (!isEditMode) {
+  // If not logged in as admin OR not in active edit mode: render clean native image with NO editing handlers or double-click modals
+  if (!isAdmin || !isEditMode) {
     return (
       <img
         src={imgSrc}
@@ -780,12 +803,6 @@ export function EditableImage({ imageId, src, className, alt, loading, ...props 
         loading={loading}
         referrerPolicy="no-referrer"
         onError={handleImgError}
-        title="Double-click to customize photo with the Editor"
-        onDoubleClick={(e) => {
-          e.stopPropagation();
-          e.preventDefault();
-          openEditor(effectiveId, resolvedSrc);
-        }}
         {...props}
       />
     );
@@ -810,7 +827,7 @@ export function EditableImage({ imageId, src, className, alt, loading, ...props 
         {...props}
       />
       
-      {/* Visual Camera Action Overlay */}
+      {/* Visual Camera Action Overlay (Only for Admin) */}
       <div className="absolute inset-0 bg-navy-950/40 group-hover:bg-navy-950/65 transition-all duration-200 flex flex-col items-center justify-center p-2 z-30">
         <div className="p-3 bg-gold-500 text-navy-950 rounded-full shadow-2xl scale-90 group-hover:scale-110 transition-transform duration-300 border-2 border-white">
           <Camera className="w-5 h-5 stroke-[2.5]" />

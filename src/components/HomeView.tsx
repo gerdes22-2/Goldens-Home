@@ -33,7 +33,7 @@ export default function HomeView({ puppies, setTab, setSelectedPuppy, setMatched
 
   const slides = [
     {
-      image: "/images/ranch_pack_hero_banner_1782302897974.jpg",
+      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTX6PkVU5yxU5HijDq7qxBJqY4eq0BL4cIrmfsW4zl3K29KCVBWVSg9bX8&s=10",
       eyebrow: "Sovereign Health Standards Since 1998",
       title: "Breeding Excellence",
       titleItalic: "With Devotion",
@@ -42,7 +42,7 @@ export default function HomeView({ puppies, setTab, setSelectedPuppy, setMatched
       secondaryCta: "Ranch Heritage"
     },
     {
-      image: "/images/sire_dam_parents_1782218119495.jpg",
+      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRu0jktvVdarrIh-xxeMAbJD0YsAbwrd_dZRN5Lh-EnqA&s=10",
       eyebrow: "OFA Good & Excellent Rated Parents",
       title: "Championship Genetics",
       titleItalic: "Pure Bloodlines",
@@ -51,7 +51,7 @@ export default function HomeView({ puppies, setTab, setSelectedPuppy, setMatched
       secondaryCta: "View Certifications"
     },
     {
-      image: "/images/breeder_dozen_puppies_grass_1782302919140.jpg",
+      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRC64x0sXaLMpGTpeXiia-bEM0QazpY2W0_h5e0rTN98A&s",
       eyebrow: "Early Neurological Socialization",
       title: "Molded For Character",
       titleItalic: "Gentle Spirits",
@@ -114,7 +114,7 @@ export default function HomeView({ puppies, setTab, setSelectedPuppy, setMatched
     {
       id: 1,
       category: 'social',
-      image: "/images/ranch_pack_hero_banner_1782302897974.jpg",
+      image: "https://static.wixstatic.com/media/ca3310_50f4b673562249f4914835d407c157b9~mv2.jpeg/v1/fill/w_980,h_653,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/ca3310_50f4b673562249f4914835d407c157b9~mv2.jpeg",
       tag: "Hand-Raised",
       title: "Physical Socialization",
       description: "Daily open pasture play and sensory yard activities fostering balanced, joyful dispositions.",
@@ -124,7 +124,7 @@ export default function HomeView({ puppies, setTab, setSelectedPuppy, setMatched
     {
       id: 2,
       category: 'vet',
-      image: "/images/valley_ranch_sunset_1782303523047.jpg",
+      image: "https://tse4.mm.bing.net/th/id/OIP.BMLAKVZ7KXr02XZOf1da5QHaE7?r=0&pid=ImgDet&w=474&h=315&rs=1&o=7&rm=3",
       tag: "Vet Clinic Pass",
       title: "Structured Diagnostics",
       description: "Rigorous veterinarian physical evaluations, cardiac checks, and certified OFA standards.",
@@ -134,7 +134,7 @@ export default function HomeView({ puppies, setTab, setSelectedPuppy, setMatched
     {
       id: 3,
       category: 'social',
-      image: "/images/patriotic_goldens_bandana_1782303395345.jpg",
+      image: "https://tse4.mm.bing.net/th/id/OIP.1K15rzd-rbkqJg8B4rTqYQHaE8?r=0&pid=ImgDet&w=203&h=135&c=7&o=7&rm=3",
       tag: "Certified Blood",
       title: "Heritage Lineage",
       description: "Our foundation parents embody generations of gentle temperament and award-winning conformation.",
@@ -144,7 +144,7 @@ export default function HomeView({ puppies, setTab, setSelectedPuppy, setMatched
     {
       id: 4,
       category: 'training',
-      image: "/images/breeder_three_puppies_1782303426621.jpg",
+      image: "https://tse3.mm.bing.net/th/id/OIP.0AihFrnRIgiEHeRYak6XfQHaLH?r=0&pid=ImgDet&w=203&h=304&c=7&o=7&rm=3",
       tag: "ENS Trained",
       title: "Active Outdoor Drills",
       description: "Early recall foundation, obstacle confidence, and structured learning in our ranch gardens.",
@@ -753,7 +753,7 @@ export default function HomeView({ puppies, setTab, setSelectedPuppy, setMatched
             <div className="absolute inset-0 bg-gold-500/10 rounded-3xl -rotate-2 group-hover:rotate-0 transition-transform duration-500"></div>
             <EditableImage 
               imageId="breeder-philosophy-parents"
-              src="/images/sire_dam_parents_1782218119495.jpg" 
+              src="https://static.wixstatic.com/media/ca3310_cf6fcb58629645da9a07d8a6054724dc~mv2.jpeg/v1/fill/w_980,h_1307,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/ca3310_cf6fcb58629645da9a07d8a6054724dc~mv2.jpeg" 
               alt="Golden Retriever parents standing proudly together" 
               className="relative w-full h-[400px] object-cover rounded-3xl shadow-sm border border-gray-150"
             />

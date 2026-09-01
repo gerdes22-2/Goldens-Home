@@ -147,8 +147,8 @@ export default function WaitlistGrowthChart() {
           </div>
 
           {/* Recharts Container */}
-          <div className="w-full h-[320px] relative z-10">
-            <ResponsiveContainer width="100%" height="100%">
+          <div className="w-full h-[320px] relative z-10 min-w-0">
+            <ResponsiveContainer width="100%" height="100%" minWidth={0}>
               <AreaChart
                 data={chartData}
                 margin={{ top: 10, right: 10, left: -25, bottom: 0 }}

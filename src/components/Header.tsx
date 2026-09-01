@@ -68,7 +68,7 @@ export default function Header({ currentTab, setTab }: HeaderProps) {
                 <div className="absolute inset-0 bg-gold-400 rounded-full blur-md opacity-30 group-hover:opacity-60 transition-opacity"></div>
                 <img
                   id="header-logo-img"
-                  src="/images/golden_paws_logo_1783021185349.jpg"
+                  src="https://cdn.corenexis.com/f/9GnFhiW4aBT.png"
                   alt="Golden Paws Home Logo"
                   referrerPolicy="no-referrer"
                   className="relative w-12 h-12 object-cover rounded-full border-2 border-gold-500 shadow-xl"

@@ -30,31 +30,75 @@ export default function App() {
   const [history, setHistory] = useState<string[]>(['home']);
   const [historyIndex, setHistoryIndex] = useState<number>(0);
 
-  const [puppies, setPuppiesState] = useState<Puppy[]>(DEFAULT_PUPPIES);
+  // Initialize puppies state with local storage fallback if available
+  const [puppies, setPuppiesState] = useState<Puppy[]>(() => {
+    try {
+      const saved = localStorage.getItem('golden_paws_puppies');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed;
+        }
+      }
+    } catch (e) {
+      console.warn('Could not read puppies from localStorage:', e);
+    }
+    return DEFAULT_PUPPIES;
+  });
   const [reviews, setReviews] = useState<Review[]>(DEFAULT_REVIEWS);
   const [waitlist, setWaitlist] = useState<WaitlistEntry[]>(DEFAULT_WAITLIST);
   const [selectedPuppy, setSelectedPuppy] = useState<Puppy | null>(null);
 
-  // Load puppies from server API on mount
+  // Load puppies from server API on mount, syncing to localStorage and UI
   useEffect(() => {
-    fetch('/api/puppies')
-      .then(res => res.json())
-      .then(data => {
+    const fetchPuppies = async () => {
+      try {
+        const res = await fetch('/api/puppies');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
         if (Array.isArray(data) && data.length > 0) {
+          try {
+            localStorage.setItem('golden_paws_puppies', JSON.stringify(data));
+          } catch (storageErr) {
+            console.warn('Could not sync puppies to localStorage:', storageErr);
+          }
           setPuppiesState(data);
         }
-      })
-      .catch(err => console.warn('Could not load server puppies:', err));
+      } catch (err) {
+        console.warn('Could not load server puppies:', err);
+      }
+    };
+    fetchPuppies();
   }, []);
 
-  const setPuppies = (newPuppies: Puppy[] | ((prev: Puppy[]) => Puppy[])) => {
+  // Update puppy state: ensures local storage sync and server-side save complete before updating UI state
+  const setPuppies = async (newPuppies: Puppy[] | ((prev: Puppy[]) => Puppy[])) => {
     const updated = typeof newPuppies === 'function' ? newPuppies(puppies) : newPuppies;
+    
+    // 1. Synchronously persist to localStorage
+    try {
+      localStorage.setItem('golden_paws_puppies', JSON.stringify(updated));
+    } catch (storageErr) {
+      console.warn('Could not sync puppies to localStorage:', storageErr);
+    }
+
+    // 2. Synchronously await server-side save
+    try {
+      const res = await fetch('/api/puppies', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updated)
+      });
+      if (!res.ok) {
+        throw new Error(`Server returned status ${res.status}`);
+      }
+      await res.json();
+    } catch (err) {
+      console.warn('Could not sync puppies to server:', err);
+    }
+
+    // 3. Reflect changes in UI state after storage sync and server save complete
     setPuppiesState(updated);
-    fetch('/api/puppies', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(updated)
-    }).catch(err => console.warn('Could not sync puppies to server:', err));
   };
   
   // Navigation Handler with history recording

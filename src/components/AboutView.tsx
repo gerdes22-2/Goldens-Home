@@ -84,7 +84,7 @@ export default function AboutView({ setTab }: AboutViewProps) {
         prcdPRA2: "Clear / Normal",
         ichthyosis: "Clear / Normal"
       },
-      image: "/images/sire_dam_parents_1782218119495.jpg"
+      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSnnflJvX4NvZzNZxVeTQtCdnvjh-AMe33FlDfjyr7IEA&s=10"
     },
     {
       id: "BELLA-145",
@@ -102,7 +102,7 @@ export default function AboutView({ setTab }: AboutViewProps) {
         prcdPRA2: "Carrier / Unaffected (Safe Pairing)",
         ichthyosis: "Clear / Normal"
       },
-      image: "/images/patriotic_goldens_bandana_1782303395345.jpg"
+      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRm62zW76R9zTTSkjuMRDR9YuLVjN8J7IpMUxIYvaRxdA&s=10"
     },
     {
       id: "STERLING-204",
@@ -120,7 +120,7 @@ export default function AboutView({ setTab }: AboutViewProps) {
         prcdPRA2: "Clear / Normal",
         ichthyosis: "Clear / Normal"
       },
-      image: "/images/valley_ranch_sunset_1782303523047.jpg"
+      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvTbAG8SaKUDgEZc_x0TyVSYul-Htv6YiWa83833dZag&s"
     }
   ];
 
@@ -216,7 +216,7 @@ export default function AboutView({ setTab }: AboutViewProps) {
                     <div className="absolute inset-0 bg-gold-500 rounded-full blur-md opacity-35"></div>
                     <EditableImage 
                       imageId="founder-portrait"
-                      src="/src/assets/images/ciara_breeder_portrait_1782303471681.jpg" 
+                      src="https://cdn.corenexis.com/f/zVbY25yT0dt.jpeg" 
                       className="w-20 h-20 rounded-2xl object-cover border-2 border-gold-500 relative" 
                       alt="Ciara Wallen - Breeding Director" 
                     />

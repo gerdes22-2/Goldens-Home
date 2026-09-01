@@ -569,35 +569,42 @@ export default function ReviewsView({ reviews, onAddReview, setTab }: ReviewsVie
               )}
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
               {[
                 {
                   id: "alumni-showcase-1",
-                  src: "/images/ciara_breeder_portrait_1782303471681.jpg",
+                  src: "https://tse2.mm.bing.net/th/id/OIP.dd4qIdns4RpeWnOwcVJ2ogHaE7?r=0&pid=ImgDet&w=203&h=135&c=7&o=7&rm=3",
                   name: "Bella & River",
                   location: "Aspen, CO",
                   age: "2.5 Years"
                 },
                 {
                   id: "alumni-showcase-2",
-                  src: "/images/ranch_pack_hero_banner_1782302897974.jpg",
+                  src: "https://th.bing.com/th/id/OIP.ZVx6sKoEZV-scBoKSz73EgHaE7?w=279&h=186&c=7&r=0&o=7&pid=1.7&rm=3",
                   name: "Leo & Family",
                   location: "Seattle, WA",
                   age: "1.5 Years"
                 },
                 {
                   id: "alumni-showcase-3",
-                  src: "/images/breeder_dozen_puppies_grass_1782302919140.jpg",
-                  name: "Oliver",
+                  src: "https://tse3.mm.bing.net/th/id/OIP.0AihFrnRIgiEHeRYak6XfQHaLH?r=0&pid=ImgDet&w=203&h=304&c=7&o=7&rm=3",
+                  name: "Oliver & Cooper",
                   location: "Austin, TX",
                   age: "3 Years"
                 },
                 {
                   id: "alumni-showcase-4",
-                  src: "/images/patriotic_goldens_bandana_1782303395345.jpg",
+                  src: "https://tse4.mm.bing.net/th/id/OIP.82YAtwBnDlPI7PLsUZ_zxwHaED?r=0&pid=ImgDet&w=203&h=111&c=7&o=7&rm=3",
                   name: "Charlie & Chloe",
                   location: "Boulder, CO",
                   age: "1 Year"
+                },
+                {
+                  id: "alumni-showcase-5",
+                  src: "https://tse4.mm.bing.net/th/id/OIP.1K15rzd-rbkqJg8B4rTqYQHaE8?r=0&pid=ImgDet&w=203&h=135&c=7&o=7&rm=3",
+                  name: "Daisy & Max",
+                  location: "San Diego, CA",
+                  age: "2 Years"
                 }
               ].map((item) => (
                 <div key={item.id} className="group relative rounded-2xl overflow-hidden shadow-sm bg-stone-100 border border-stone-200">
